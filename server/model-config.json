@@ -14,50 +14,50 @@
     ]
   },
   "User": {
-    "dataSource": "db"
+    "dataSource": "mongoDB"
   },
   "AccessToken": {
-    "dataSource": "db",
+    "dataSource": "mongoDB",
     "public": false
   },
   "ACL": {
-    "dataSource": "db",
+    "dataSource": "mongoDB",
     "public": false
   },
   "RoleMapping": {
-    "dataSource": "db",
+    "dataSource": "mongoDB",
     "public": false
   },
   "Role": {
-    "dataSource": "db",
+    "dataSource": "mongoDB",
     "public": false
   },
   "location": {
-    "dataSource": "db",
+    "dataSource": "mongoDB",
     "public": true
   },
   "employee": {
-    "dataSource": "db",
-    "public": false
+    "dataSource": "mongoDB",
+    "public": true
   },
   "external": {
-    "dataSource": "db",
+    "dataSource": "mongoDB",
     "public": true
   },
   "company": {
-    "dataSource": "db",
+    "dataSource": "mongoDB",
     "public": true
   },
   "meeting": {
-    "dataSource": "db",
+    "dataSource": "mongoDB",
     "public": true
   },
   "note": {
-    "dataSource": "db",
+    "dataSource": "mongoDB",
     "public": true
   },
   "project": {
-    "dataSource": "db",
+    "dataSource": "mongoDB",
     "public": true
   }
 }
