@@ -17,7 +17,18 @@
     }
   },
   "validations": [],
-  "relations": {},
+  "relations": {
+    "meeting": {
+      "type": "belongsTo",
+      "model": "meeting",
+      "foreignKey": ""
+    },
+    "author": {
+      "type": "belongsTo",
+      "model": "employee",
+      "foreignKey": ""
+    }
+  },
   "acls": [],
   "methods": {}
 }
