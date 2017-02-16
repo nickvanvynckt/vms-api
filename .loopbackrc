@@ -1,0 +1,16 @@
+{
+    "dev": {
+        "mongodb": {
+            "host": "178.62.206.7",
+            "database": "vms",
+            "port": 27017
+        }
+    },
+    "test": {
+        "mongodb": {
+            "host": "127.0.0.1",
+            "database": "vms",
+            "port": 27017
+        }
+    }
+}
