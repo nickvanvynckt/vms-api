@@ -1,0 +1,29 @@
+{
+  "name": "project",
+  "plural": "projects",
+  "base": "PersistedModel",
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
+  "properties": {
+    "name": {
+      "type": "string",
+      "required": true
+    },
+    "budget": {
+      "type": "number",
+      "required": true
+    }
+  },
+  "validations": [],
+  "relations": {
+    "meetings": {
+      "type": "hasMany",
+      "model": "meeting",
+      "foreignKey": ""
+    }
+  },
+  "acls": [],
+  "methods": {}
+}

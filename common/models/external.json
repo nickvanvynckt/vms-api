@@ -1,0 +1,36 @@
+{
+  "name": "external",
+  "plural": "externals",
+  "base": "PersistedModel",
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
+  "properties": {
+    "fname": {
+      "type": "string",
+      "required": true
+    },
+    "lname": {
+      "type": "string",
+      "required": true
+    },
+    "email": {
+      "type": "string",
+      "required": true
+    },
+    "pictureURL": {
+      "type": "string"
+    }
+  },
+  "validations": [],
+  "relations": {
+    "company": {
+      "type": "hasOne",
+      "model": "company",
+      "foreignKey": ""
+    }
+  },
+  "acls": [],
+  "methods": {}
+}

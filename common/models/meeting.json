@@ -1,0 +1,48 @@
+{
+  "name": "meeting",
+  "plural": "meetings",
+  "base": "PersistedModel",
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
+  "properties": {
+    "room": {
+      "type": "string",
+      "required": true
+    },
+    "start": {
+      "type": "date",
+      "required": true
+    },
+    "end": {
+      "type": "date",
+      "required": true
+    }
+  },
+  "validations": [],
+  "relations": {
+    "notes": {
+      "type": "hasMany",
+      "model": "note",
+      "foreignKey": ""
+    },
+    "meetees": {
+      "type": "hasMany",
+      "model": "employee",
+      "foreignKey": ""
+    },
+    "externals": {
+      "type": "hasMany",
+      "model": "external",
+      "foreignKey": ""
+    },
+    "project": {
+      "type": "belongsTo",
+      "model": "project",
+      "foreignKey": ""
+    }
+  },
+  "acls": [],
+  "methods": {}
+}
