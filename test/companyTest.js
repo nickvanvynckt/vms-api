@@ -5,6 +5,4 @@ var should = require('should');
 
 var server = supertest.agent('http://localhost:3000');
 
-describe('GET', function() {
-    it()
-});
+console.log('this is second');
