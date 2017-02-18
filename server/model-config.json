@@ -3,8 +3,8 @@
     "sources": [
       "loopback/common/models",
       "loopback/server/models",
-      "../server/models",
-      "./models"
+      "./models",
+      "../node_modules/loopback-component-passport/lib/models"
     ],
     "mixins": [
       "loopback/common/mixins",
@@ -15,6 +15,14 @@
   },
   "User": {
     "dataSource": "mongoDB"
+  },
+  "UserIdentity": {
+    "dataSource": "mongoDB",
+    "public": false
+  },
+  "UserCredential": {
+    "dataSource": "mongoDB",
+    "public": false
   },
   "AccessToken": {
     "dataSource": "mongoDB",

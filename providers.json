@@ -5,7 +5,10 @@
     "usernameField": "username",
     "passwordField": "password",
     "authPath": "/auth/local",
-    "successRedirect": "/auth/account"
+    "successRedirect": "/auth/account",
+    "failureRedirect": "/login",
+    "failureFlash": true,
+    "json": true
   },
   "facebook-login": {
     "provider": "facebook",
@@ -26,13 +29,14 @@
     "provider": "google",
     "module": "passport-google-oauth",
     "strategy": "OAuth2Strategy",
-    "clientID": "{google-client-id-1}",
-    "clientSecret": "{google-client-secret-1}",
+    "clientID": "258576207390-v3eeisflali8goj9dp4qrq9q0p98rpfg.apps.googleusercontent.com",
+    "clientSecret": "G0Vu58pzXxN-Yggbcu8O3BvO",
     "callbackURL": "http://localhost:3000/auth/google/callback",
     "authPath": "/auth/google",
     "callbackPath": "/auth/google/callback",
     "successRedirect": "/auth/account",
-    "scope": ["email", "profile"]
+    "scope": ["email", "profile"],
+    "failureFlash": true
   },
   "twitter-login": {
     "provider": "twitter",
@@ -42,8 +46,8 @@
     "authPath": "/auth/twitter",
     "callbackPath": "/auth/twitter/callback",
     "successRedirect": "/auth/account",
-    "consumerKey": "{twitter-consumer-key}",
-    "consumerSecret": "{twitter-consumer-secret}"
+    "consumerKey": "7J1RJGXAU22dAS3MZlD6M5pxn",
+    "consumerSecret": "r6xIe4BM0jdABcwotr7IGYPXpE7E9NxGAytC2RefV2B6vlanUA"
   },
   "facebook-link": {
     "provider": "facebook",
@@ -61,8 +65,8 @@
     "provider": "google",
     "module": "passport-google-oauth",
     "strategy": "OAuth2Strategy",
-    "clientID": "{google-client-id-2}",
-    "clientSecret": "{google-client-secret-2}",
+    "clientID": "258576207390-shrt2kh9f1dvgn3t8nu6ksah2nicvi19.apps.googleusercontent.com",
+    "clientSecret": "vy9kYdWfnTXYURqjEmLrsaKg",
     "callbackURL": "http://localhost:3000/link/google/callback",
     "authPath": "/link/google",
     "callbackPath": "/link/google/callback",
@@ -77,9 +81,9 @@
     "authPath": "/auth/linkedin",
     "callbackPath": "/auth/linkedin/callback",
     "successRedirect": "/auth/account",
-    "clientID": "xxxxxxxxxxxxxxxxx",
-    "clientSecret": "xxxxxxxxxxxxxxxxxx",
-    "scope": ["r_fullprofile", "r_emailaddress", "r_network"],
+    "clientID": "86q32krgcwud98",
+    "clientSecret": "jHTjkR8pKTMWAgZt",
+    "scope": ["r_basicprofile", "r_emailaddress"],
     "state": true
   }
 }
