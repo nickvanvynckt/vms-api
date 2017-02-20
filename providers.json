@@ -5,7 +5,6 @@
     "usernameField": "username",
     "passwordField": "password",
     "authPath": "/auth/local",
-    "successRedirect": "/auth/account",
     "failureRedirect": "/login",
     "failureFlash": true,
     "json": true
@@ -19,7 +18,7 @@
     "callbackURL": "http://localhost:3000/auth/facebook/callback",
     "authPath": "/auth/facebook",
     "callbackPath": "/auth/facebook/callback",
-    "successRedirect": "/auth/account",
+    "json": true,
     "scope": ["email"],
     "authOptions": {
       "display": "popup"
@@ -48,7 +47,7 @@
     "callbackURL": "http://localhost:3000/auth/twitter/callback",
     "authPath": "/auth/twitter",
     "callbackPath": "/auth/twitter/callback",
-    "successRedirect": "/auth/account",
+    "json": true,
     "consumerKey": "7J1RJGXAU22dAS3MZlD6M5pxn",
     "consumerSecret": "r6xIe4BM0jdABcwotr7IGYPXpE7E9NxGAytC2RefV2B6vlanUA"
   },
@@ -60,7 +59,7 @@
     "callbackURL": "http://localhost:3000/link/facebook/callback",
     "authPath": "/link/facebook",
     "callbackPath": "/link/facebook/callback",
-    "successRedirect": "/link/account",
+    "json": true,
     "scope": ["email", "user_likes"],
     "link": true
   },
@@ -73,7 +72,7 @@
     "callbackURL": "http://localhost:3000/link/google/callback",
     "authPath": "/link/google",
     "callbackPath": "/link/google/callback",
-    "successRedirect": "/link/account",
+    "json": true,
     "scope": ["email", "profile"],
     "link": true
   },
