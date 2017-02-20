@@ -34,9 +34,12 @@
     "callbackURL": "http://localhost:3000/auth/google/callback",
     "authPath": "/auth/google",
     "callbackPath": "/auth/google/callback",
-    "successRedirect": "/auth/account",
     "scope": ["email", "profile"],
-    "failureFlash": true
+    "failureFlash": true,
+    "json": true,
+    "authOptions": {
+      "display": "popup"
+    }
   },
   "twitter-login": {
     "provider": "twitter",
@@ -80,10 +83,10 @@
     "callbackURL": "http://localhost:3000/auth/linkedin/callback",
     "authPath": "/auth/linkedin",
     "callbackPath": "/auth/linkedin/callback",
-    "successRedirect": "/auth/account",
     "clientID": "86q32krgcwud98",
     "clientSecret": "jHTjkR8pKTMWAgZt",
     "scope": ["r_basicprofile", "r_emailaddress"],
-    "state": true
+    "state": true,
+    "json": true
   }
 }
