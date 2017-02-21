@@ -21,6 +21,11 @@
     },
     "pictureURL": {
       "type": "string"
+    },
+    "ttl": {
+      "type": "number",
+      "required": true,
+      "default": 1209600
     }
   },
   "validations": [],
