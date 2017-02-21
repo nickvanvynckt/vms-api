@@ -8,11 +8,11 @@
   "properties": {
     "fname": {
       "type": "string",
-      "required": false
+      "required": true
     },
     "lname": {
       "type": "string",
-      "required": false
+      "required": true
     },
     "email": {
       "type": "string",
