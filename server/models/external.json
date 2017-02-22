@@ -16,8 +16,7 @@
       "required": true
     },
     "email": {
-      "type": "string",
-      "required": true
+      "type": "string"
     },
     "pictureURL": {
       "type": "string"
@@ -26,6 +25,10 @@
       "type": "number",
       "required": true,
       "default": 1209600
+    },
+    "last_edited": {
+      "type": "date",
+      "required": true
     }
   },
   "validations": [],
