@@ -69,6 +69,46 @@ for (var s in config) {
     passportConfigurator.configureProvider(s, c);
 }
 
+var passport = require('passport');
+var refresh = require('passport-oauth2-refresh');
+var GoogleStrategy = require('passport-google-oauth2').Strategy;
+
+var googleStrategy = new GoogleStrategy({
+    clientID: "258576207390-v3eeisflali8goj9dp4qrq9q0p98rpfg.apps.googleusercontent.com",
+    clientSecret: "G0Vu58pzXxN-Yggbcu8O3BvO",
+    callbackURL: "http://localhost:3000/auth/google/callback",
+    passReqToCallback: true
+},
+    function (request, accessToken, refreshToken, profile, done) {
+        app.models.employee.findOne({ where: { and: [{ fname: profile.name.givenName }, { lname: profile.name.familyName }] } }, function (err, emp) {
+            var id = emp.id;
+            profile.externalId = profile.id;
+            delete profile["id"];
+            profile.employeeId = id;
+            profile.credentials = {accessToken:accessToken, refreshToken:refreshToken};
+            profile.provider = "google-login";
+            app.models.UserIdentity.upsertWithWhere({externalId:profile.externalId}, profile, function(err, obj) {
+                return done(err, obj);
+            });
+        });
+    }
+);
+
+passport.use(googleStrategy);
+refresh.use(googleStrategy);
+
+
+app.get('/auth/google',
+    passport.authenticate('google', {
+        scope: ["https://www.googleapis.com/auth/userinfo.email", "https://www.googleapis.com/auth/userinfo.profile", "https://www.googleapis.com/auth/calendar"],
+        accessType: "offline",
+        prompt: "consent",
+        json: true
+    }));
+
+app.get('/auth/google/callback',
+    passport.authenticate('google', { successRedirect: '/', failureRedirect: '/login', failureFlash: true }));
+
 app.start = function () {
     // start the web server
     return app.listen(function () {

@@ -26,9 +26,10 @@
     "loopback-passport": "^1.0.2",
     "mongodb": "^2.2.24",
     "passport": "^0.3.2",
-    "passport-google-oauth": "^1.0.0",
+    "passport-google-oauth2": "^0.1.6",
     "passport-linkedin-oauth2": "^1.4.1",
     "passport-local": "^1.0.0",
+    "passport-oauth2-refresh": "^1.0.0",
     "serve-favicon": "^2.0.1",
     "strong-error-handler": "^1.0.1"
   },

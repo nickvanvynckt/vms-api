@@ -9,37 +9,6 @@
     "failureFlash": true,
     "json": true
   },
-  "google-login": {
-    "provider": "google",
-    "module": "passport-google-oauth",
-    "strategy": "OAuth2Strategy",
-    "clientID": "258576207390-v3eeisflali8goj9dp4qrq9q0p98rpfg.apps.googleusercontent.com",
-    "clientSecret": "G0Vu58pzXxN-Yggbcu8O3BvO",
-    "callbackURL": "http://localhost:3000/auth/google/callback",
-    "authPath": "/auth/google",
-    "callbackPath": "/auth/google/callback",
-    "scope": ["https://www.googleapis.com/auth/userinfo.email", "https://www.googleapis.com/auth/userinfo.profile", "https://www.googleapis.com/auth/calendar"],
-    "failureFlash": true,
-    "json": true,
-    "accessType": "offline",
-    "prompt": "consent",
-    "authOptions": {
-      "display": "popup"
-    }
-  },
-  "google-link": {
-    "provider": "google",
-    "module": "passport-google-oauth",
-    "strategy": "OAuth2Strategy",
-    "clientID": "258576207390-shrt2kh9f1dvgn3t8nu6ksah2nicvi19.apps.googleusercontent.com",
-    "clientSecret": "vy9kYdWfnTXYURqjEmLrsaKg",
-    "callbackURL": "http://localhost:3000/link/google/callback",
-    "authPath": "/link/google",
-    "callbackPath": "/link/google/callback",
-    "json": true,
-    "scope": ["email", "profile"],
-    "link": true
-  },
     "linkedin-login": {
     "provider": "linkedin",
     "module": "passport-linkedin-oauth2",
