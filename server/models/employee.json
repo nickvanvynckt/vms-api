@@ -24,6 +24,12 @@
     },
     "pictureURL": {
       "type": "string"
+    },
+    "calendars": {
+      "type": [
+        "string"
+      ],
+      "required": false
     }
   },
   "validations": [],

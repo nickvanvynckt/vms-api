@@ -2,9 +2,13 @@
   "name": "meeting",
   "plural": "meetings",
   "base": "PersistedModel",
-  "idInjection": true,
+  "idInjection": false,
   "options": {
     "validateUpsert": true
+  },
+  "id": {
+    "type": "string",
+    "id": true
   },
   "properties": {
     "room": {

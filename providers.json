@@ -18,9 +18,11 @@
     "callbackURL": "http://localhost:3000/auth/google/callback",
     "authPath": "/auth/google",
     "callbackPath": "/auth/google/callback",
-    "scope": ["email", "profile"],
+    "scope": ["https://www.googleapis.com/auth/userinfo.email", "https://www.googleapis.com/auth/userinfo.profile", "https://www.googleapis.com/auth/calendar"],
     "failureFlash": true,
     "json": true,
+    "accessType": "offline",
+    "prompt": "consent",
     "authOptions": {
       "display": "popup"
     }
