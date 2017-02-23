@@ -5,6 +5,7 @@ var app = require(path.resolve(__dirname, '../server'));
 var GoogleSearch = require('google-search');
 var googleSearch = new GoogleSearch({key: 'AIzaSyAWqi1qfUyGPOTcmhE0gu-5Ik8hz8Ncjr8', cx: '002086392339423832635:4taepnplwtq'});
 var MongoClient = require('mongodb').MongoClient;
+var async = require('async');
 
 module.exports = function(External) {
     External.getInformation = function(fname, lname, cb) {
@@ -22,19 +23,9 @@ module.exports = function(External) {
         }, function(err, external) {
             if (err)
                 console.log(err);
-            if(external[0]) {
-                var d = new Date(external[0].last_edited);
-                d.setSeconds(d.getSeconds() + external[0].ttl);
-                if (Date.now() < d) {
-                    resp = external[0];
-                } else {
-                    resp = searchAndUpdate(external[0]);
-                }
-            } else {
-                resp = searchAndInsert(fname, lname);
-            }
-
-            cb(null, resp);
+            searchAndUpsert(external[0], fname, lname, function(object) {
+                cb(null, object);
+            });
         });
     };
     External.remoteMethod('getInformation', {
@@ -56,32 +47,54 @@ module.exports = function(External) {
             type: 'Object'
         }
     });
-    function searchAndUpdate(external) {
-        var name = external.fname + ' ' + external.lname;
-        googleSearch.build({
-            q : name,
-            lr : 'lang_nl'
-        }, function(error, response) {
+
+    function searchAndUpsert(external, fname, lname, cb) {
+        if (external) {
+            console.log('This external is already in the database, let\'s check if his data is still viable!');
+
+            var d = new Date(external.last_edited);
+            d.setSeconds(d.getSeconds() + external.ttl);
+
+            if (Date.now() < d) {
+                console.log('The information about the external is still up to date!');
+            } else {
+                console.log('The information about the external is no longer up to date!');
+                upsert(fname, lname);
+            }
+
+            cb(external);
+        } else {
+            console.log('Woopsie, this external is not in the database, let\'s insert it!');
+            upsert(fname, lname, function(object){
+                cb(object);
+            });
+        }
+
+    }
+
+    function upsert(fname, lname, cb) {
+        var object;
+        var name = fname + ' ' + lname;
+        var googleSearch = googleSearchFunction(name, function(data) {
             var index = 0;
             var found = false;
-            while (index < 10  && !found) {
-                if (response.items[index].pagemap.hcard[0].fn == name) {
-                    console.log('match');
-                    var fname = response.items[index].pagemap.hcard[0].fn.substr(0,response.items[index].pagemap.hcard[0].fn.indexOf(' '));
-                    var lname = response.items[index].pagemap.hcard[0].fn.substr(response.items[index].pagemap.hcard[0].fn.indexOf(' ')+1);
+
+            while (index < 10 && !found) {
+                if (data.items[index].pagemap.hcard[0].fn == name) {
+                    var fname = data.items[index].pagemap.hcard[0].fn.substr(0, data.items[index].pagemap.hcard[0].fn.indexOf(' '));
+                    var lname = data.items[index].pagemap.hcard[0].fn.substr(data.items[index].pagemap.hcard[0].fn.indexOf(' ') + 1);
 
                     found = true;
 
-                    app.models.External.update({
-                        fname: external.fname,
-                        lname: external.lname
-                    }, {
-                        pictureURL: response.items[index].pagemap.hcard[0].photo,
-                        //Date gets saved in UTC (one hour off)
-                        last_edited: Date.now(),
-                        ttl: 1209600
-                    }, function cb(err, obj){
-                        return obj;
+                    var external = new External({
+                        fname: fname, lname: lname, pictureURL: data.items[index].pagemap.hcard[0].photo,
+                        //Date get's saved in UTC (one hour off)
+                        last_edited: Date.now()
+                    });
+
+                    External.upsert(external, function(err, obj) {
+                        object = obj;
+                        cb(object);
                     });
                 } else {
                     index++;
@@ -89,37 +102,17 @@ module.exports = function(External) {
             }
         });
     }
-    function searchAndInsert(fname, lname) {
-        var name = fname + ' ' + lname;
+
+    function googleSearchFunction(name, cb) {
+        var data;
         googleSearch.build({
-            q : name,
-            lr : 'lang_nl'
+            q: name,
+            lr: 'lang_nl'
         }, function(error, response) {
-            var found = false;
-            var index = 0;
-            while (index < 10 && !found) {
-                if (response.items[index].pagemap.hcard[0].fn == name) {
-                    var fname = response.items[index].pagemap.hcard[0].fn.substr(0,response.items[index].pagemap.hcard[0].fn.indexOf(' '));
-                    var lname = response.items[index].pagemap.hcard[0].fn.substr(response.items[index].pagemap.hcard[0].fn.indexOf(' ')+1);
-
-                    found = true;
-
-                    var external = new External({
-                        fname: fname,
-                        lname: lname,
-                        pictureURL: response.items[index].pagemap.hcard[0].photo,
-                        //Date get's saved in UTC (one hour off)
-                        last_edited: Date.now(),
-                    });
-
-                    app.models.External.upsert(external, function cb(err, obj){
-                        return obj;
-                    });
-
-                } else {
-                    index++;
-                }
-            }
+            if (error)
+                console.log(error);
+            data = response;
+            cb(data);
         });
     }
 };
