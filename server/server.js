@@ -77,7 +77,7 @@ app.use(flash());
 var googleStrategy = new GoogleStrategy({
     clientID: "258576207390-v3eeisflali8goj9dp4qrq9q0p98rpfg.apps.googleusercontent.com",
     clientSecret: "G0Vu58pzXxN-Yggbcu8O3BvO",
-    callbackURL: "http://localhost:4000/auth/google/callback",
+    callbackURL: "http://localhost:3000/integrations",
     passReqToCallback: true
 }, function(request, accessToken, refreshToken, profile, done) {
     app.models.employee.findOne({
@@ -111,7 +111,7 @@ var googleStrategy = new GoogleStrategy({
 var linkedInStrategy = new LinkedinStrategy({
     clientID: "86q32krgcwud98",
     clientSecret: "jHTjkR8pKTMWAgZt",
-    callbackURL: "http://localhost:4000/auth/linkedin/callback"
+    callbackURL: "http://localhost:3000/integrations"
 }, function(request, token, tokenSecret, profile, done){
     console.log(token);
     app.models.employee.findOne({
