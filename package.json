@@ -32,7 +32,8 @@
     "passport-local": "^1.0.0",
     "passport-oauth2-refresh": "^1.0.0",
     "serve-favicon": "^2.0.1",
-    "strong-error-handler": "^1.0.1"
+    "strong-error-handler": "^1.0.1",
+    "cors": "*" 
   },
   "devDependencies": {
     "chai": "^3.5.0",
