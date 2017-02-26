@@ -1,56 +1,57 @@
 {
-    "name": "external",
-    "plural": "externals",
-    "base": "PersistedModel",
-    "idInjection": true,
-    "options": {
-        "validateUpsert": true
+  "name": "external",
+  "plural": "externals",
+  "base": "PersistedModel",
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
+  "properties": {
+    "fname": {
+      "type": "string",
+      "required": true
     },
-    "properties": {
-        "fname": {
-            "type": "string",
-            "required": true
-        },
-        "lname": {
-            "type": "string",
-            "required": true
-        },
-        "email": {
-            "type": "string"
-        },
-        "pictureURL": {
-            "type": "string"
-        },
-        "ttl": {
-            "type": "number",
-            "required": true,
-            "default": 1209600
-        },
-        "last_edited": {
-            "type": "date",
-            "required": true
-        }
+    "lname": {
+      "type": "string",
+      "required": true
     },
-    "validations": [],
-    "relations": {
-        "company": {
-            "type": "hasOne",
-            "model": "company",
-            "foreignKey": ""
-        }
+    "email": {
+      "type": "string"
     },
-    "acls": [{
-            "accessType": "*",
-            "principalType": "ROLE",
-            "principalId": "$unauthenticated",
-            "permission": "DENY"
-        },
-        {
-            "accessType": "*",
-            "principalType": "ROLE",
-            "principalId": "$authenticated",
-            "permission": "ALLOW"
-        }
-    ],
-    "methods": {}
+    "pictureURL": {
+      "type": "string"
+    },
+    "ttl": {
+      "type": "number",
+      "required": true,
+      "default": 1209600
+    },
+    "last_edited": {
+      "type": "date",
+      "required": true
+    }
+  },
+  "validations": [],
+  "relations": {
+    "company": {
+      "type": "hasOne",
+      "model": "company",
+      "foreignKey": ""
+    }
+  },
+  "acls": [
+    {
+      "accessType": "*",
+      "principalType": "ROLE",
+      "principalId": "$unauthenticated",
+      "permission": "DENY"
+    },
+    {
+      "accessType": "*",
+      "principalType": "ROLE",
+      "principalId": "$authenticated",
+      "permission": "ALLOW"
+    }
+  ],
+  "methods": {}
 }

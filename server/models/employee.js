@@ -11,8 +11,6 @@ module.exports = function (Employee) {
                 refreshToken = token;
             }
             UserIdentity.upsertWithWhere({ and: [{ employeeId: id }, { provider: 'google-login' }] }, { credentials: { accessToken: accessToken, refreshToken: refreshToken } }, function (err, obj) {
-                console.log(err);
-                console.log(obj);
                 cb(accessToken);
             });
         });
@@ -136,8 +134,8 @@ module.exports = function (Employee) {
                 data = { err: err, list: null };
                 cb(data);
             } else if (eventsList !== null) {
-                cb({ err: null, list: eventsList.items });
-                //addToMeetings(app, eventsList, cb);
+                //cb({ err: null, list: eventsList.items });
+                addToMeetings(app, eventsList.items, cb);
             }
         });
     }
@@ -148,21 +146,125 @@ module.exports = function (Employee) {
         var errs = [];
         var returnList = [];
 
-        for (var i = 0; i < list.length; i++) {
-            Meeting.upsert({
-                room: list[i]
-            }, function (err, obj) {
+        for (let i = 0; i < list.length; i++) {
+            seperateAttendees(app, list[i].attendees, function (data) {
+                Meeting.upsertWithWhere({ externalId: list[i].id },
+                    {
+                        externalId: list[i].id,
+                        summary: list[i].summary,
+                        room: list[i].location,
+                        start: list[i].start.dateTime,
+                        end: list[i].end.dateTime,
+                    }, function (err, obj) {
+                        if (err !== null) {
+                            errs.push(err);
+                            loopDone++;
+                        } else {
+                            returnList.push(obj);
+                            addEmployeesToMeeting(obj, data.employees, function() {
+                                addExternalsToMeeting(obj, data.externals, function() {
+                                    loopDone++;
+                                    if (loopDone === list.length) {
+                                        if (errs.length > 0) {
+                                            cb({ err: errs, list: null });
+                                        } else {
+                                            cb({ err: null, list: returnList });
+                                        }
+                                    }
+                                });
+                            });
+                        }
+                        if (loopDone === list.length) {
+                            if (errs.length > 0) {
+                                cb({ err: errs, list: null });
+                            } else {
+                                cb({ err: null, list: returnList });
+                            }
+                        }
+                    });
+            });
+        }
+    }
+
+    function seperateAttendees(app, attendees, cb) {
+        var UserIdentity = app.models.UserIdentity;
+        var External = app.models.External;
+        var Employee = app.models.Employee;
+        var loopDone = 0;
+        var employees = [];
+        var externals = [];
+        var errs = [];
+
+        for (let i = 0; attendees !== null && attendees !== undefined && i < attendees.length; i++) {
+            UserIdentity.findOne({ where: { and: [{ email: attendees[i].email }, { provider: 'google-login' }] } }, function (err, obj) {
                 if (err !== null) {
                     errs.push(err);
+                    loopDone++;
+                } else if (obj !== null) {
+                    Employee.findOne({ where: { id: obj.employeeId } }, function (err, obj) {
+                        employees.push(obj);
+                        loopDone++;
+                        if (loopDone === attendees.length) {
+                            if (errs.length > 0) {
+                                cb({ err: errs, employees: null, externals: null });
+                            } else {
+                                cb({ err: null, employees: employees, externals: externals });
+                            }
+                        }
+                    })
                 } else {
-                    returnList.push(obj);
+                    External.getInformation(attendees[i].displayName.substr(0, attendees[i].displayName.indexOf(' ')), attendees[i].displayName.substr(attendees[i].displayName.indexOf(' ') + 1), function (err, obj) {
+                        externals.push(obj);
+                        loopDone++;
+                        if (loopDone === attendees.length) {
+                            if (errs.length > 0) {
+                                cb({ err: errs, employees: null, externals: null });
+                            } else {
+                                cb({ err: null, employees: employees, externals: externals });
+                            }
+                        }
+                    });
                 }
-                if (loopDone === list.length) {
+                if (loopDone === attendees.length) {
                     if (errs.length > 0) {
-                        cb({ err: errs, list: null });
+                        cb({ err: errs, employees: null, externals: null });
                     } else {
-                        cb({ err: null, list: list });
+                        cb({ err: null, employees: employees, externals: externals });
                     }
+                }
+            });
+        }
+
+        if (attendees === null || attendees === undefined) {
+            cb({ err: null, employees: [], externals: [] });
+        }
+    }
+
+    function addEmployeesToMeeting(meeting, employees, cb) {
+        var loopDone = 0;
+        if(employees.length === 0) {
+            cb();
+        }
+        for(var i = 0; i < employees.length; i++) {
+            meeting.meetees.add(employees[i].id, function (err) {
+                loopDone++;
+                if(loopDone === employees.length) {
+                    cb();
+                }
+            });
+        }
+    }
+
+    function addExternalsToMeeting(meeting, externals, cb) {
+        var loopDone = 0;
+        if(externals.length === 0) {
+            cb();
+        }
+        for(var i = 0; i < externals.length; i++) {
+            meeting.externals.add(externals[i].id, function (err) {
+                loopDone++;
+                if(loopDone === externals.length) {
+                    cb();
                 }
             });
         }

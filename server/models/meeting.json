@@ -2,18 +2,22 @@
   "name": "meeting",
   "plural": "meetings",
   "base": "PersistedModel",
-  "idInjection": false,
+  "idInjection": true,
   "options": {
     "validateUpsert": true
   },
-  "id": {
-    "type": "string",
-    "id": true
-  },
   "properties": {
-    "room": {
+    "externalId": {
       "type": "string",
       "required": true
+    },
+    "summary": {
+      "type": "string",
+      "required": false
+    },
+    "room": {
+      "type": "string",
+      "required": false
     },
     "start": {
       "type": "date",
@@ -31,20 +35,18 @@
       "model": "note",
       "foreignKey": ""
     },
-    "meetees": {
-      "type": "hasMany",
-      "model": "employee",
-      "foreignKey": ""
-    },
     "externals": {
-      "type": "hasMany",
-      "model": "external",
-      "foreignKey": ""
+      "type": "hasAndBelongsToMany",
+      "model": "external"
     },
     "project": {
       "type": "belongsTo",
       "model": "project",
       "foreignKey": ""
+    },
+    "meetees": {
+      "type": "hasAndBelongsToMany",
+      "model": "employee"
     }
   },
   "acls": [
