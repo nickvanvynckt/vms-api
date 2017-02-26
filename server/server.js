@@ -77,7 +77,7 @@ app.use(flash());
 var googleStrategy = new GoogleStrategy({
     clientID: "258576207390-v3eeisflali8goj9dp4qrq9q0p98rpfg.apps.googleusercontent.com",
     clientSecret: "G0Vu58pzXxN-Yggbcu8O3BvO",
-    callbackURL: "http://localhost:3000/integrations",
+    callbackURL: "http://localhost:4000/auth/google/callback",
     passReqToCallback: true
 }, function(request, accessToken, refreshToken, profile, done) {
     app.models.employee.findOne({
@@ -111,9 +111,9 @@ var googleStrategy = new GoogleStrategy({
 var linkedInStrategy = new LinkedinStrategy({
     clientID: "86q32krgcwud98",
     clientSecret: "jHTjkR8pKTMWAgZt",
-    callbackURL: "http://localhost:3000/integrations"
+    callbackURL: "http://localhost:4000/auth/linkedin/callback"
 }, function(request, token, tokenSecret, profile, done){
-    console.log(token);
+    console.log(profile);
     app.models.employee.findOne({
         where: {
             and: [
@@ -126,12 +126,13 @@ var linkedInStrategy = new LinkedinStrategy({
         }
     }, function(err, emp) {
         var id = emp.id;
+        profile.externalId = profile.id;
         delete profile["id"];
         profile.employeeId = id;
         profile.provider = "linkedin-login";
         profile.credentials = {
             accessToken: tokenSecret
-        }
+        };
         app.models.UserIdentity.upsertWithWhere({
             externalId: profile.externalId
         }, profile, function(err, obj) {
@@ -155,8 +156,8 @@ app.get('/auth/google', passport.authenticate('google', {
 }));
 
 app.get('/auth/google/callback', passport.authenticate('google', {
-    successRedirect: '/',
-    failureRedirect: '/login',
+    successRedirect: 'http://localhost:3000/',
+    failureRedirect: 'http://localhost:3000/login',
     responseType: "token",
     failureFlash: true
 }));
@@ -168,8 +169,8 @@ app.get('/auth/linkedin', passport.authenticate('linkedin', {
 }));
 
 app.get('/auth/linkedin/callback', passport.authenticate('linkedin', {
-    successRedirect: '/',
-    failureRedirect: '/login',
+    successRedirect: 'http://localhost:3000/',
+    failureRedirect: 'http://localhost:3000/login',
     responseType: "token",
     failureFlash: true
 }));
