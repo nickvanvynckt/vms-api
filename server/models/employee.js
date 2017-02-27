@@ -323,4 +323,9 @@ module.exports = function (Employee) {
             type: 'array'
         }
     });
+
+    Employee.afterRemoteError("create", function(ctx, next) {
+        ctx.error.message = (ctx.error.message.substr(ctx.error.message.indexOf("Details:"))).substr(9);
+        next();
+    });
 };
