@@ -28,6 +28,12 @@ START "" nodemon
 START http://localhost:4000/explorer
 ```
 
+Remark: You may need to create the C:/data/db folder first.
+
+```
+mkdir C:/data/db
+```
+
 ### Linux/OSX
 ```
 # Run the MongoDB daemon in the background
@@ -47,4 +53,11 @@ nodemon &
 
 # Open the API explorer in the browser
 open http://localhost:4000/explorer
+```
+
+Remark: You may need to create the /data/db folder first.
+
+```
+sudo mkdir /data/db
+sudo chown `id -u` /data/db
 ```
