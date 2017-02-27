@@ -28,7 +28,7 @@ module.exports = function (Employee) {
                 var id = emp.id;
                 var calendarIds = emp.calendars;
 
-                if (calendarIds.length === 0) {
+                if (calendarIds === undefined || calendarIds.length === 0) {
                     cb("No calendars selected.");
                 } else {
                     UserIdentity.findOne({ where: { and: [{ employeeId: id }, { provider: 'google-login' }] } }, function (err, ui) {
@@ -160,7 +160,10 @@ module.exports = function (Employee) {
                             errs.push(err);
                             loopDone++;
                         } else {
-                            returnList.push(obj);
+                            var obj1 = JSON.parse(JSON.stringify(obj));
+                            obj1.meetees = data.employees;
+                            obj1.externals = data.externals;
+                            returnList.push(obj1);
                             addEmployeesToMeeting(obj, data.employees, function() {
                                 addExternalsToMeeting(obj, data.externals, function() {
                                     loopDone++;
