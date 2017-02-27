@@ -156,7 +156,7 @@ app.get('/auth/google', passport.authenticate('google', {
 }));
 
 app.get('/auth/google/callback', passport.authenticate('google', {
-    successRedirect: 'http://localhost:3000/',
+    successRedirect: 'http://localhost:3000/integrations?success=google',
     failureRedirect: 'http://localhost:3000/login',
     responseType: "token",
     failureFlash: true
@@ -169,7 +169,7 @@ app.get('/auth/linkedin', passport.authenticate('linkedin', {
 }));
 
 app.get('/auth/linkedin/callback', passport.authenticate('linkedin', {
-    successRedirect: 'http://localhost:3000/',
+    successRedirect: 'http://localhost:3000/integrations?success=linkedin',
     failureRedirect: 'http://localhost:3000/login',
     responseType: "token",
     failureFlash: true
