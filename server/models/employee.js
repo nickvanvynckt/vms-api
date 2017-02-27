@@ -5,6 +5,10 @@ var refresh = require('passport-oauth2-refresh');
 
 module.exports = function (Employee) {
 
+    Employee.getInformation = function (name, cb) {
+
+    }
+
     function refreshToken(UserIdentity, token, id, cb) {
         refresh.requestNewAccessToken('google', token, function (err, accessToken, refreshToken) {
             if (refreshToken === null || refreshToken === undefined) {
@@ -21,7 +25,7 @@ module.exports = function (Employee) {
         const app = this.app;
         const UserIdentity = this.app.models.UserIdentity;
 
-        Employee.findOne({ where: { username: name } }, function (err, emp) {
+        Employee.findOne({ where: { or: [{username: name}, {email: name}] } }, function (err, emp) {
             if (err !== null) {
                 cb(err);
             } else if (emp !== null) {
@@ -68,12 +72,11 @@ module.exports = function (Employee) {
         const app = this.app;
         const UserIdentity = this.app.models.UserIdentity;
 
-        Employee.findOne({ where: { username: name } }, function (err, emp) {
+        Employee.findOne({ where: { or: [{username: name}, {email: name}] } }, function (err, emp) {
             if (err !== null) {
                 cb(err);
             } else if (emp !== null) {
                 var id = emp.id;
-
                 UserIdentity.findOne({ where: { and: [{ employeeId: id }, { provider: 'google-login' }] } }, function (err, ui) {
                     refreshToken(UserIdentity, ui.credentials.refreshToken, id, function (accessToken) {
                         getMeetingsById(app, accessToken, calendarId, function (data) {
@@ -95,7 +98,7 @@ module.exports = function (Employee) {
         var resp;
         const UserIdentity = this.app.models.UserIdentity;
 
-        Employee.findOne({ where: { username: name } }, function (err, emp) {
+        Employee.findOne({ where: { or: [{username: name}, {email: name}] } }, function (err, emp) {
             if (err !== null) {
                 cb(err);
             } else if (emp !== null) {
@@ -145,6 +148,7 @@ module.exports = function (Employee) {
         var loopDone = 0;
         var errs = [];
         var returnList = [];
+        var cbCalled = false;
 
         for (let i = 0; i < list.length; i++) {
             seperateAttendees(app, list[i].attendees, function (data) {
@@ -169,18 +173,22 @@ module.exports = function (Employee) {
                                     loopDone++;
                                     if (loopDone === list.length) {
                                         if (errs.length > 0) {
+                                            cbCalled = true;
                                             cb({ err: errs, list: null });
                                         } else {
+                                            cbCalled = true;                                           
                                             cb({ err: null, list: returnList });
                                         }
                                     }
                                 });
                             });
                         }
-                        if (loopDone === list.length) {
+                        if (loopDone === list.length && !cbCalled) {
                             if (errs.length > 0) {
+                                cbCalled = true;                              
                                 cb({ err: errs, list: null });
                             } else {
+                                cbCalled = true;
                                 cb({ err: null, list: returnList });
                             }
                         }
@@ -279,13 +287,14 @@ module.exports = function (Employee) {
             verb: 'get'
         },
         accepts: {
-            arg: 'username',
+            arg: 'name',
             type: 'string'
         },
         returns: {
             arg: 'meetings',
             type: 'array'
-        }
+        },
+        description: 'Get all meetings from all calendars by username or email of the employee.'
     });
 
     Employee.remoteMethod('getMeetingsByCalendarId', {
@@ -295,7 +304,7 @@ module.exports = function (Employee) {
         },
         accepts: [
             {
-                arg: 'username',
+                arg: 'name',
                 type: 'string'
             },
             {
@@ -306,7 +315,8 @@ module.exports = function (Employee) {
         returns: {
             arg: 'meetings',
             type: 'array'
-        }
+        },
+        description: 'Get all meetings from a given calendar by username or email of the employee.'
     });
 
     Employee.remoteMethod('getCalendars', {
@@ -315,13 +325,14 @@ module.exports = function (Employee) {
             verb: 'get'
         },
         accepts: {
-            arg: 'username',
+            arg: 'name',
             type: 'string'
         },
         returns: {
             arg: 'calendars',
             type: 'array'
-        }
+        },
+        description: 'Get information about the calendars by username or email of the employee.'
     });
 
     Employee.afterRemoteError("create", function(ctx, next) {
