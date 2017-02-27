@@ -103,7 +103,14 @@ var googleStrategy = new GoogleStrategy({
         app.models.UserIdentity.upsertWithWhere({
             externalId: profile.externalId
         }, profile, function(err, obj) {
-            return done(err, obj);
+            if(emp.pictureURL === undefined && profile.photos.length > 0) {
+                emp.pictureURL = profile.photos[0].value;
+                app.models.Employee.upsertWithWhere({
+                    id: id
+                }, emp, function(err, emp) {
+                    return done(err, obj);
+                });
+            }
         });
     });
 });
@@ -113,7 +120,6 @@ var linkedInStrategy = new LinkedinStrategy({
     clientSecret: "jHTjkR8pKTMWAgZt",
     callbackURL: "http://localhost:4000/auth/linkedin/callback"
 }, function(request, token, tokenSecret, profile, done){
-    console.log(profile);
     app.models.employee.findOne({
         where: {
             and: [
@@ -136,7 +142,14 @@ var linkedInStrategy = new LinkedinStrategy({
         app.models.UserIdentity.upsertWithWhere({
             externalId: profile.externalId
         }, profile, function(err, obj) {
-            return done(err, obj);
+            if(profile.photos.length > 0) {
+                emp.pictureURL = profile.photos[0].value;
+                app.models.Employee.upsertWithWhere({
+                    id: id
+                }, emp, function(err, emp) {
+                    return done(err, obj);
+                });
+            }
         });
     });
 });

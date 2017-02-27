@@ -5,10 +5,6 @@ var refresh = require('passport-oauth2-refresh');
 
 module.exports = function (Employee) {
 
-    Employee.getInformation = function (name, cb) {
-
-    }
-
     function refreshToken(UserIdentity, token, id, cb) {
         refresh.requestNewAccessToken('google', token, function (err, accessToken, refreshToken) {
             if (refreshToken === null || refreshToken === undefined) {
