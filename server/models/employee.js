@@ -132,7 +132,7 @@ module.exports = function (Employee) {
             if (err !== null) {
                 data = { err: err, list: null };
                 cb(data);
-            } else if (eventsList !== null && eventsList.length > 0) {
+            } else if (eventsList !== null && eventsList.items.length > 0) {
                 addToMeetings(app, eventsList.items, cb);
             } else {
                 cb({ err: "No meetings found.", list: null });
