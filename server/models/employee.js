@@ -21,7 +21,7 @@ module.exports = function (Employee) {
         const app = this.app;
         const UserIdentity = this.app.models.UserIdentity;
 
-        Employee.findOne({ where: { or: [{username: name}, {email: name}] } }, function (err, emp) {
+        Employee.findOne({ where: { or: [{ username: name }, { email: name }] } }, function (err, emp) {
             if (err !== null) {
                 cb(err);
             } else if (emp !== null) {
@@ -68,7 +68,7 @@ module.exports = function (Employee) {
         const app = this.app;
         const UserIdentity = this.app.models.UserIdentity;
 
-        Employee.findOne({ where: { or: [{username: name}, {email: name}] } }, function (err, emp) {
+        Employee.findOne({ where: { or: [{ username: name }, { email: name }] } }, function (err, emp) {
             if (err !== null) {
                 cb(err);
             } else if (emp !== null) {
@@ -94,7 +94,7 @@ module.exports = function (Employee) {
         var resp;
         const UserIdentity = this.app.models.UserIdentity;
 
-        Employee.findOne({ where: { or: [{username: name}, {email: name}] } }, function (err, emp) {
+        Employee.findOne({ where: { or: [{ username: name }, { email: name }] } }, function (err, emp) {
             if (err !== null) {
                 cb(err);
             } else if (emp !== null) {
@@ -148,47 +148,52 @@ module.exports = function (Employee) {
 
         for (let i = 0; i < list.length; i++) {
             seperateAttendees(app, list[i].attendees, function (data) {
-                Meeting.upsertWithWhere({ externalId: list[i].id },
-                    {
-                        externalId: list[i].id,
-                        summary: list[i].summary,
-                        room: list[i].location,
-                        start: list[i].start.dateTime,
-                        end: list[i].end.dateTime,
-                    }, function (err, obj) {
-                        if (err !== null) {
-                            errs.push(err);
-                            loopDone++;
-                        } else {
-                            var obj1 = JSON.parse(JSON.stringify(obj));
-                            obj1.meetees = data.employees;
-                            obj1.externals = data.externals;
-                            returnList.push(obj1);
-                            addEmployeesToMeeting(obj, data.employees, function() {
-                                addExternalsToMeeting(obj, data.externals, function() {
-                                    loopDone++;
-                                    if (loopDone === list.length) {
-                                        if (errs.length > 0) {
-                                            cbCalled = true;
-                                            cb({ err: errs, list: null });
-                                        } else {
-                                            cbCalled = true;                                           
-                                            cb({ err: null, list: returnList });
-                                        }
-                                    }
-                                });
-                            });
-                        }
-                        if (loopDone === list.length && !cbCalled) {
-                            if (errs.length > 0) {
-                                cbCalled = true;                              
-                                cb({ err: errs, list: null });
+                //WHOLE DAY EVENTS ARE SKIPPED
+                if (list[i].start.dateTime !== undefined && list[i].end.dateTime !== undefined) {
+                    Meeting.upsertWithWhere({ externalId: list[i].id },
+                        {
+                            externalId: list[i].id,
+                            summary: list[i].summary,
+                            room: list[i].location,
+                            start: list[i].start.dateTime,
+                            end: list[i].end.dateTime,
+                        }, function (err, obj) {
+                            if (err !== null) {
+                                errs.push(err);
+                                loopDone++;
                             } else {
-                                cbCalled = true;
-                                cb({ err: null, list: returnList });
+                                var obj1 = JSON.parse(JSON.stringify(obj));
+                                obj1.meetees = data.employees;
+                                obj1.externals = data.externals;
+                                returnList.push(obj1);
+                                addEmployeesToMeeting(obj, data.employees, function () {
+                                    addExternalsToMeeting(obj, data.externals, function () {
+                                        loopDone++;
+                                        if (loopDone === list.length) {
+                                            if (errs.length > 0) {
+                                                cbCalled = true;
+                                                cb({ err: errs, list: null });
+                                            } else {
+                                                cbCalled = true;
+                                                cb({ err: null, list: returnList });
+                                            }
+                                        }
+                                    });
+                                });
                             }
-                        }
-                    });
+                        });
+                } else {
+                    loopDone++;
+                }
+                if (loopDone === list.length && !cbCalled) {
+                    if (errs.length > 0) {
+                        cbCalled = true;
+                        cb({ err: errs, list: null });
+                    } else {
+                        cbCalled = true;
+                        cb({ err: null, list: returnList });
+                    }
+                }
             });
         }
     }
@@ -249,13 +254,13 @@ module.exports = function (Employee) {
 
     function addEmployeesToMeeting(meeting, employees, cb) {
         var loopDone = 0;
-        if(employees.length === 0) {
+        if (employees.length === 0) {
             cb();
         }
-        for(var i = 0; i < employees.length; i++) {
+        for (var i = 0; i < employees.length; i++) {
             meeting.meetees.add(employees[i].id, function (err) {
                 loopDone++;
-                if(loopDone === employees.length) {
+                if (loopDone === employees.length) {
                     cb();
                 }
             });
@@ -264,13 +269,13 @@ module.exports = function (Employee) {
 
     function addExternalsToMeeting(meeting, externals, cb) {
         var loopDone = 0;
-        if(externals.length === 0) {
+        if (externals.length === 0) {
             cb();
         }
-        for(var i = 0; i < externals.length; i++) {
+        for (var i = 0; i < externals.length; i++) {
             meeting.externals.add(externals[i].id, function (err) {
                 loopDone++;
-                if(loopDone === externals.length) {
+                if (loopDone === externals.length) {
                     cb();
                 }
             });
@@ -331,7 +336,7 @@ module.exports = function (Employee) {
         description: 'Get information about the calendars by username or email of the employee.'
     });
 
-    Employee.afterRemoteError("create", function(ctx, next) {
+    Employee.afterRemoteError("create", function (ctx, next) {
         ctx.error.message = (ctx.error.message.substr(ctx.error.message.indexOf("Details:"))).substr(9);
         next();
     });
