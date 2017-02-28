@@ -107,9 +107,11 @@ var googleStrategy = new GoogleStrategy({
                 emp.pictureURL = profile.photos[0].value;
                 app.models.Employee.upsertWithWhere({
                     id: id
-                }, emp, function(err, emp) {
+                }, emp, function(err1, emp) {
                     return done(err, obj);
                 });
+            } else {
+                return done(err, obj);
             }
         });
     });
@@ -146,9 +148,11 @@ var linkedInStrategy = new LinkedinStrategy({
                 emp.pictureURL = profile.photos[0].value;
                 app.models.Employee.upsertWithWhere({
                     id: id
-                }, emp, function(err, emp) {
+                }, emp, function(err1, emp) {
                     return done(err, obj);
                 });
+            } else {
+                return done(err, obj);
             }
         });
     });
