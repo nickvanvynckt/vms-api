@@ -162,35 +162,48 @@ passport.use(googleStrategy);
 passport.use(linkedInStrategy);
 refresh.use(googleStrategy);
 
-app.get('/auth/google', passport.authenticate('google', {
-    scope: [
-        "https://www.googleapis.com/auth/userinfo.email", "https://www.googleapis.com/auth/userinfo.profile", "https://www.googleapis.com/auth/calendar"
-    ],
-    accessType: "offline",
-    prompt: "consent",
-    action: "page",
-    json: true
-}));
+app.get('/auth/google', function(req, res, next) {
+    passport.authenticate('google', {
+        scope: [
+            "https://www.googleapis.com/auth/userinfo.email", "https://www.googleapis.com/auth/userinfo.profile", "https://www.googleapis.com/auth/calendar"
+        ],
+        callbackURL: "http://localhost:4000/auth/google/callback?callback=" + req.query.callback,
+        accessType: "offline",
+        prompt: "consent",
+        action: "page",
+        json: true
+    }, function(err, usr, info) {
+    }) (req, res, next);
+});
 
-app.get('/auth/google/callback', passport.authenticate('google', {
-    successRedirect: 'http://localhost:3000/integrations?success=google',
-    failureRedirect: 'http://localhost:3000/login',
-    responseType: "token",
-    failureFlash: true
-}));
+app.get('/auth/google/callback', function(req, res, next) {
+    passport.authenticate('google', {
+        callbackURL: "http://localhost:4000/auth/google/callback?callback=" + req.query.callback,
+        successRedirect: 'http://localhost:3000/integrations?success=google&callback=' + req.query.callback, 
+        failureRedirect: 'http://localhost:3000/',
+        responseType: "token",
+        failureFlash: true
+    }) (req, res, next);
+});
 
-app.get('/auth/linkedin', passport.authenticate('linkedin', {
-    "scope": ["r_basicprofile", "r_emailaddress"],
-    "state": true,
-    "json": true
-}));
+app.get('/auth/linkedin', function(req, res, next) {
+    passport.authenticate('linkedin', {
+        "scope": ["r_basicprofile", "r_emailaddress"],
+        "callbackURL": "http://localhost:4000/auth/linkedin/callback?callback=" + req.query.callback,
+        "state": true,
+        "json": true
+    }) (req, res, next);
+});
 
-app.get('/auth/linkedin/callback', passport.authenticate('linkedin', {
-    successRedirect: 'http://localhost:3000/integrations?success=linkedin',
-    failureRedirect: 'http://localhost:3000/login',
-    responseType: "token",
-    failureFlash: true
-}));
+app.get('/auth/linkedin/callback', function(req, res, next) {
+    passport.authenticate('linkedin', {
+        callbackURL: "http://localhost:4000/auth/linkedin/callback?callback=" + req.query.callback,
+        successRedirect: 'http://localhost:3000/integrations?success=linkedin&callback=' + req.query.callback, 
+        failureRedirect: 'http://localhost:3000/',
+        responseType: "token",
+        failureFlash: true
+    }) (req, res, next);
+});
 
 app.start = function() {
     // start the web server
