@@ -50,21 +50,18 @@ module.exports = function(External) {
 
     function searchAndUpsert(external, fname, lname, cb) {
         if (external) {
-            console.log('This external is already in the database, let\'s check if his data is still viable!');
-
+            // Already in the database, check if data is still viable!');
             var d = new Date(external.last_edited);
             d.setSeconds(d.getSeconds() + external.ttl);
-
             if (Date.now() < d) {
-                console.log('The information about the external is still up to date!');
+                // External info is up to date
             } else {
-                console.log('The information about the external is no longer up to date!');
+                // External info no longer up to date
                 upsert(fname, lname);
             }
-
             cb(external);
         } else {
-            console.log('Woopsie, this external is not in the database, let\'s insert it!');
+            // External not in database, add it
             upsert(fname, lname, function(object){
                 cb(object);
             });
@@ -88,7 +85,7 @@ module.exports = function(External) {
 
                     var external = new External({
                         fname: fname, lname: lname, pictureURL: data.items[index].pagemap.hcard[0].photo,
-                        //Date get's saved in UTC (one hour off)
+                        //Date is saved in UTC (one hour off)
                         last_edited: Date.now()
                     });
 
