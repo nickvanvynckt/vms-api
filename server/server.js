@@ -116,7 +116,6 @@ var linkedInStrategy = new LinkedinStrategy({
     callbackURL: "http://localhost:4000/auth/linkedin/callback",
     passReqToCallback: true
 }, function(req, token, tokenSecret, profile, done){
-    console.log(req);
     var data = JSON.parse(req.query.state);
     app.models.employee.findOne({
         where: { id: data.id }

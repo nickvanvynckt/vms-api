@@ -5,6 +5,23 @@ var refresh = require('passport-oauth2-refresh');
 
 module.exports = function (Employee) {
 
+    Employee.removeAllData = function (id, cb) {
+        const UserIdentity = this.app.models.UserIdentity;
+        Employee.destroyById(id, function(err) {
+            if(err !== null) {
+                cb(err);
+            } else {
+                UserIdentity.destroyAll({employeeId:id}, function(err, info) {
+                    if(err !== null) {
+                        cb(err);
+                    } else {
+                        cb();
+                    }
+                });
+            }
+        });
+    }
+
     function refreshToken(UserIdentity, token, id, cb) {
         refresh.requestNewAccessToken('google', token, function (err, accessToken, refreshToken) {
             if (refreshToken === null || refreshToken === undefined) {
@@ -284,6 +301,18 @@ module.exports = function (Employee) {
             });
         }
     }
+
+    Employee.remoteMethod('removeAllData', {
+        http: {
+            path: '/removeAllData',
+            verb: 'delete'
+        },
+        accepts: {
+            arg: 'id',
+            type: 'string'
+        },
+        description: 'Remove employee and his UserIdentity objects.'
+    });
 
     Employee.remoteMethod('getMeetings', {
         http: {
