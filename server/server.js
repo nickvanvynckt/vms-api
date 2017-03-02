@@ -80,16 +80,9 @@ var googleStrategy = new GoogleStrategy({
     callbackURL: "http://localhost:4000/auth/google/callback",
     passReqToCallback: true
 }, function(request, accessToken, refreshToken, profile, done) {
+    var data = JSON.parse(request.query.state);
     app.models.employee.findOne({
-        where: {
-            and: [
-                {
-                    fname: profile.name.givenName
-                }, {
-                    lname: profile.name.familyName
-                }
-            ]
-        }
+        where: { id: data.id }
     }, function(err, emp) {
         var id = emp.id;
         profile.externalId = profile.id;
@@ -120,18 +113,13 @@ var googleStrategy = new GoogleStrategy({
 var linkedInStrategy = new LinkedinStrategy({
     clientID: "86q32krgcwud98",
     clientSecret: "jHTjkR8pKTMWAgZt",
-    callbackURL: "http://localhost:4000/auth/linkedin/callback"
-}, function(request, token, tokenSecret, profile, done){
+    callbackURL: "http://localhost:4000/auth/linkedin/callback",
+    passReqToCallback: true
+}, function(req, token, tokenSecret, profile, done){
+    console.log(req);
+    var data = JSON.parse(req.query.state);
     app.models.employee.findOne({
-        where: {
-            and: [
-                {
-                    fname: profile.name.givenName
-                }, {
-                    lname: profile.name.familyName
-                }
-            ]
-        }
+        where: { id: data.id }
     }, function(err, emp) {
         var id = emp.id;
         profile.externalId = profile.id;
@@ -171,7 +159,8 @@ app.get('/auth/google', function(req, res, next) {
         accessType: "offline",
         prompt: "consent",
         action: "page",
-        json: true
+        json: true,
+        state: JSON.stringify({id: req.query.id})
     }, function(err, usr, info) {
     }) (req, res, next);
 });
@@ -190,8 +179,8 @@ app.get('/auth/linkedin', function(req, res, next) {
     passport.authenticate('linkedin', {
         "scope": ["r_basicprofile", "r_emailaddress"],
         "callbackURL": "http://localhost:4000/auth/linkedin/callback?callback=" + req.query.callback,
-        "state": true,
-        "json": true
+        "json": true,
+        "state": JSON.stringify({id: req.query.id})
     }) (req, res, next);
 });
 

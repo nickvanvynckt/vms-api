@@ -100,6 +100,8 @@ module.exports = function (Employee) {
             } else if (emp !== null) {
                 var id = emp.id;
 
+                console.log(id);
+                
                 UserIdentity.findOne({ where: { and: [{ employeeId: id }, { provider: 'google-login' }] } }, function (err, ui) {
 
                     refreshToken(UserIdentity, ui.credentials.refreshToken, id, function (accessToken) {
