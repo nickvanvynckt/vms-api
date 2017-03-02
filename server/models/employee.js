@@ -7,12 +7,12 @@ module.exports = function (Employee) {
 
     Employee.removeAllData = function (id, cb) {
         const UserIdentity = this.app.models.UserIdentity;
-        Employee.destroyById(id, function(err) {
-            if(err !== null) {
+        Employee.destroyById(id, function (err) {
+            if (err !== null) {
                 cb(err);
             } else {
-                UserIdentity.destroyAll({employeeId:id}, function(err, info) {
-                    if(err !== null) {
+                UserIdentity.destroyAll({ employeeId: id }, function (err, info) {
+                    if (err !== null) {
                         cb(err);
                     } else {
                         cb();
@@ -49,29 +49,33 @@ module.exports = function (Employee) {
                     cb("No calendars selected.");
                 } else {
                     UserIdentity.findOne({ where: { and: [{ employeeId: id }, { provider: 'google-login' }] } }, function (err, ui) {
-                        refreshToken(UserIdentity, ui.credentials.refreshToken, id, function (accessToken) {
-                            var errs = [];
-                            var meetings = [];
-                            var loopDone = 0;
+                        if (ui === null) {
+                            cb("Google not integrated.");
+                        } else {
+                            refreshToken(UserIdentity, ui.credentials.refreshToken, id, function (accessToken) {
+                                var errs = [];
+                                var meetings = [];
+                                var loopDone = 0;
 
-                            for (var i = 0; i < calendarIds.length; i++) {
-                                getMeetingsById(app, accessToken, calendarIds[i], function (data) {
-                                    if (data.err !== null) {
-                                        errs.push(data.err);
-                                    } else {
-                                        meetings = meetings.concat(data.list);
-                                    }
-                                    loopDone++;
-                                    if (loopDone === calendarIds.length) {
-                                        if (errs.length > 0) {
-                                            cb(errs);
+                                for (var i = 0; i < calendarIds.length; i++) {
+                                    getMeetingsById(app, accessToken, calendarIds[i], function (data) {
+                                        if (data.err !== null) {
+                                            errs.push(data.err);
                                         } else {
-                                            cb(null, meetings);
+                                            meetings = meetings.concat(data.list);
                                         }
-                                    }
-                                });
-                            }
-                        });
+                                        loopDone++;
+                                        if (loopDone === calendarIds.length) {
+                                            if (errs.length > 0) {
+                                                cb(errs);
+                                            } else {
+                                                cb(null, meetings);
+                                            }
+                                        }
+                                    });
+                                }
+                            });
+                        }
                     });
                 }
             } else {
@@ -91,15 +95,19 @@ module.exports = function (Employee) {
             } else if (emp !== null) {
                 var id = emp.id;
                 UserIdentity.findOne({ where: { and: [{ employeeId: id }, { provider: 'google-login' }] } }, function (err, ui) {
-                    refreshToken(UserIdentity, ui.credentials.refreshToken, id, function (accessToken) {
-                        getMeetingsById(app, accessToken, calendarId, function (data) {
-                            if (data.err !== null) {
-                                cb(data.err);
-                            } else {
-                                cb(null, data.list);
-                            }
+                    if (ui === null) {
+                        cb("Google not integrated.");
+                    } else {
+                        refreshToken(UserIdentity, ui.credentials.refreshToken, id, function (accessToken) {
+                            getMeetingsById(app, accessToken, calendarId, function (data) {
+                                if (data.err !== null) {
+                                    cb(data.err);
+                                } else {
+                                    cb(null, data.list);
+                                }
+                            });
                         });
-                    });
+                    }
                 });
             } else {
                 cb("Unable to find user in database.");
@@ -118,20 +126,23 @@ module.exports = function (Employee) {
                 var id = emp.id;
 
                 console.log(id);
-                
+
                 UserIdentity.findOne({ where: { and: [{ employeeId: id }, { provider: 'google-login' }] } }, function (err, ui) {
+                    if (ui === null) {
+                        cb("Google not integrated.");
+                    } else {
+                        refreshToken(UserIdentity, ui.credentials.refreshToken, id, function (accessToken) {
+                            var googleCalendar = new GoogleCalendar(accessToken);
 
-                    refreshToken(UserIdentity, ui.credentials.refreshToken, id, function (accessToken) {
-                        var googleCalendar = new GoogleCalendar(accessToken);
-
-                        googleCalendar.calendarList.list(function (err, calendarList) {
-                            if (err !== null) {
-                                cb(err);
-                            } else {
-                                cb(null, calendarList.items);
-                            }
+                            googleCalendar.calendarList.list(function (err, calendarList) {
+                                if (err !== null) {
+                                    cb(err);
+                                } else {
+                                    cb(null, calendarList.items);
+                                }
+                            });
                         });
-                    });
+                    }
                 });
             } else {
                 cb("Unable to find user in database.");
