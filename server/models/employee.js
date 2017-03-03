@@ -193,7 +193,7 @@ module.exports = function (Employee) {
         var cbCalled = false;
 
         for (let i = 0; i < list.length; i++) {
-            var tag = list[i].summary.substring(list[i].summary.lastIndexOf("[") + 1, list[i].summary.lastIndexOf("]")).trim();
+            var tag = (list[i].summary.substring(list[i].summary.lastIndexOf("[") + 1, list[i].summary.lastIndexOf("]"))).trim();
             createProject(app, tag, function (data) {
                 if(data.err !== null) {
                     errs.push(data.err);
@@ -218,12 +218,12 @@ module.exports = function (Employee) {
                                     errs.push(err);
                                     loopDone++;
                                 } else {
-                                    var tag = list[i].summary.substring(list[i].summary.lastIndexOf("[") + 1, list[i].summary.lastIndexOf("]")).trim();
+                                    var tag = (list[i].summary.substring(list[i].summary.lastIndexOf("[") + 1, list[i].summary.lastIndexOf("]"))).trim();
                                     var obj1 = JSON.parse(JSON.stringify(obj));
                                     obj1.meetees = data.employees;
                                     obj1.externals = data.externals;
                                     if(obj.projectId !== undefined) {
-                                        obj1.summary = tag + " - " + obj1.summary.substring(tag.length + 2).trim();
+                                        obj1.summary = tag + " - " + obj1.summary.substring(obj1.summary.lastIndexOf("]") + 1).trim();
                                     }
                                     returnList.push(obj1);
                                     addEmployeesToMeeting(obj, data.employees, function () {
@@ -372,7 +372,7 @@ module.exports = function (Employee) {
             type: 'array'
         },
         description: 'Returns which integrations are implemented for employee with id.'
-    });    
+    });
 
     Employee.remoteMethod('removeAllData', {
         http: {
