@@ -6,7 +6,6 @@ var refresh = require('passport-oauth2-refresh');
 module.exports = function (Employee) {
 
     Employee.integrations = function (id, cb) {
-        console.log("/integrations");
         const UserIdentity = this.app.models.UserIdentity;
         var returns = [];
         UserIdentity.find({ where: { employeeId: id } }, function(err, results) {
@@ -219,6 +218,7 @@ module.exports = function (Employee) {
                                     errs.push(err);
                                     loopDone++;
                                 } else {
+                                    var tag = list[i].summary.substring(list[i].summary.lastIndexOf("[") + 1, list[i].summary.lastIndexOf("]"));
                                     var obj1 = JSON.parse(JSON.stringify(obj));
                                     obj1.meetees = data.employees;
                                     obj1.externals = data.externals;
