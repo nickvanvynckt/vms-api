@@ -178,52 +178,81 @@ module.exports = function (Employee) {
         var cbCalled = false;
 
         for (let i = 0; i < list.length; i++) {
-            seperateAttendees(app, list[i].attendees, function (data) {
-                //WHOLE DAY EVENTS ARE SKIPPED
-                if (list[i].start.dateTime !== undefined && list[i].end.dateTime !== undefined) {
-                    Meeting.upsertWithWhere({ externalId: list[i].id },
-                        {
-                            externalId: list[i].id,
-                            summary: list[i].summary,
-                            room: list[i].location,
-                            start: list[i].start.dateTime,
-                            end: list[i].end.dateTime,
-                        }, function (err, obj) {
-                            if (err !== null) {
-                                errs.push(err);
-                                loopDone++;
-                            } else {
-                                var obj1 = JSON.parse(JSON.stringify(obj));
-                                obj1.meetees = data.employees;
-                                obj1.externals = data.externals;
-                                returnList.push(obj1);
-                                addEmployeesToMeeting(obj, data.employees, function () {
-                                    addExternalsToMeeting(obj, data.externals, function () {
-                                        loopDone++;
-                                        if (loopDone === list.length) {
-                                            if (errs.length > 0) {
-                                                cbCalled = true;
-                                                cb({ err: errs, list: null });
-                                            } else {
-                                                cbCalled = true;
-                                                cb({ err: null, list: returnList });
-                                            }
-                                        }
-                                    });
-                                });
-                            }
-                        });
-                } else {
-                    loopDone++;
+            var tag = list[i].summary.substring(list[i].summary.lastIndexOf("[") + 1, list[i].summary.lastIndexOf("]"));
+            createProject(app, tag, function (data) {
+                if(data.err !== null) {
+                    errs.push(data.err);
                 }
-                if (loopDone === list.length && !cbCalled) {
-                    if (errs.length > 0) {
-                        cbCalled = true;
-                        cb({ err: errs, list: null });
+                var projectId = undefined;
+                if(data.project !== null) {
+                    projectId = data.project.id;
+                }
+                seperateAttendees(app, list[i].attendees, function (data) {
+                    //WHOLE DAY EVENTS ARE SKIPPED
+                    if (list[i].start.dateTime !== undefined && list[i].end.dateTime !== undefined) {
+                        Meeting.upsertWithWhere({ externalId: list[i].id },
+                            {
+                                externalId: list[i].id,
+                                summary: list[i].summary,
+                                room: list[i].location,
+                                start: list[i].start.dateTime,
+                                end: list[i].end.dateTime,
+                                projectId: projectId
+                            }, function (err, obj) {
+                                if (err !== null) {
+                                    errs.push(err);
+                                    loopDone++;
+                                } else {
+                                    var obj1 = JSON.parse(JSON.stringify(obj));
+                                    obj1.meetees = data.employees;
+                                    obj1.externals = data.externals;
+                                    if(obj.projectId !== undefined) {
+                                        obj1.summary = tag + " - " + obj1.summary.substring(tag.length + 2).trim();
+                                    }
+                                    returnList.push(obj1);
+                                    addEmployeesToMeeting(obj, data.employees, function () {
+                                        addExternalsToMeeting(obj, data.externals, function () {
+                                            loopDone++;
+                                            if (loopDone === list.length) {
+                                                if (errs.length > 0) {
+                                                    cbCalled = true;
+                                                    cb({ err: errs, list: null });
+                                                } else {
+                                                    cbCalled = true;
+                                                    cb({ err: null, list: returnList });
+                                                }
+                                            }
+                                        });
+                                    });
+                                }
+                            });
                     } else {
-                        cbCalled = true;
-                        cb({ err: null, list: returnList });
+                        loopDone++;
                     }
+                    if (loopDone === list.length && !cbCalled) {
+                        if (errs.length > 0) {
+                            cbCalled = true;
+                            cb({ err: errs, list: null });
+                        } else {
+                            cbCalled = true;
+                            cb({ err: null, list: returnList });
+                        }
+                    }
+                });
+            });
+        }
+    }
+
+    function createProject(app, tag, cb) {
+        var Project = app.models.Project;
+        if (tag === undefined || tag.trim().length === 0) {
+            cb({ err: null, project: null });
+        } else {
+            Project.upsertWithWhere({ tag: tag }, { tag: tag }, function (err, obj) {
+                if (err !== null) {
+                    cb({ err: err, project: null });
+                } else {
+                    cb({ err: null, project: obj });
                 }
             });
         }
