@@ -5,6 +5,22 @@ var refresh = require('passport-oauth2-refresh');
 
 module.exports = function (Employee) {
 
+    Employee.integrations = function (id, cb) {
+        console.log("/integrations");
+        const UserIdentity = this.app.models.UserIdentity;
+        var returns = [];
+        UserIdentity.find({ where: { employeeId: id } }, function(err, results) {
+            if(err !== null) {
+                cb(err);
+            } else {
+                for(var i = 0; results !== null && i < results.length; i++) {
+                    returns.push(results[i].provider);
+                }
+                cb(null, returns);
+            }
+        });
+    }
+
     Employee.removeAllData = function (id, cb) {
         const UserIdentity = this.app.models.UserIdentity;
         Employee.destroyById(id, function (err) {
@@ -341,6 +357,22 @@ module.exports = function (Employee) {
             });
         }
     }
+
+    Employee.remoteMethod('integrations', {
+        http: {
+            path: '/integrations',
+            verb: 'get'
+        },
+        accepts: {
+            arg: 'id',
+            type: 'string'
+        },
+        returns: {
+            arg: 'integrations',
+            type: 'array'
+        },
+        description: 'Returns which integrations are implemented for employee with id.'
+    });    
 
     Employee.remoteMethod('removeAllData', {
         http: {
