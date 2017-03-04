@@ -1,68 +1,71 @@
 {
-  "name": "meeting",
-  "plural": "meetings",
-  "base": "PersistedModel",
-  "idInjection": true,
-  "options": {
-    "validateUpsert": true
-  },
-  "properties": {
-    "externalId": {
-      "type": "string",
-      "required": true
+    "name": "meeting",
+    "plural": "meetings",
+    "base": "PersistedModel",
+    "idInjection": true,
+    "options": {
+        "validateUpsert": true
     },
-    "summary": {
-      "type": "string",
-      "required": false
+    "properties": {
+        "externalId": {
+            "type": "string",
+            "required": true
+        },
+        "summary": {
+            "type": "string",
+            "required": false
+        },
+        "room": {
+            "type": "string",
+            "required": false
+        },
+        "start": {
+            "type": "date",
+            "required": true
+        },
+        "end": {
+            "type": "date",
+            "required": true
+        },
+        "description": {
+            "type": "string",
+            "required": false
+        }
     },
-    "room": {
-      "type": "string",
-      "required": false
+    "validations": [],
+    "relations": {
+        "notes": {
+            "type": "hasMany",
+            "model": "note",
+            "foreignKey": ""
+        },
+        "externals": {
+            "type": "hasAndBelongsToMany",
+            "model": "external"
+        },
+        "project": {
+            "type": "belongsTo",
+            "model": "project",
+            "foreignKey": ""
+        },
+        "meetees": {
+            "type": "hasAndBelongsToMany",
+            "model": "employee"
+        }
     },
-    "start": {
-      "type": "date",
-      "required": true
-    },
-    "end": {
-      "type": "date",
-      "required": true
-    }
-  },
-  "validations": [],
-  "relations": {
-    "notes": {
-      "type": "hasMany",
-      "model": "note",
-      "foreignKey": ""
-    },
-    "externals": {
-      "type": "hasAndBelongsToMany",
-      "model": "external"
-    },
-    "project": {
-      "type": "belongsTo",
-      "model": "project",
-      "foreignKey": ""
-    },
-    "meetees": {
-      "type": "hasAndBelongsToMany",
-      "model": "employee"
-    }
-  },
-  "acls": [
-    {
-      "accessType": "EXECUTE",
-      "principalType": "ROLE",
-      "principalId": "$everyone",
-      "permission": "ALLOW",
-      "property": "listMeetings"
-    },
-    {
-      "accessType": "*",
-      "principalType": "ROLE",
-      "principalId": "$authenticated",
-      "permission": "ALLOW"
-    }
-  ],
-  "methods": {}
+    "acls": [{
+            "accessType": "EXECUTE",
+            "principalType": "ROLE",
+            "principalId": "$everyone",
+            "permission": "ALLOW",
+            "property": "listMeetings"
+        },
+        {
+            "accessType": "*",
+            "principalType": "ROLE",
+            "principalId": "$authenticated",
+            "permission": "ALLOW"
+        }
+    ],
+    "methods": {}
 }
