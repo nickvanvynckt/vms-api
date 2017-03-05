@@ -29,6 +29,9 @@
     "last_edited": {
       "type": "date",
       "required": true
+    },
+    "phone": {
+      "type": "string"
     }
   },
   "validations": [],
