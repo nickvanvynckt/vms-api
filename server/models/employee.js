@@ -199,15 +199,17 @@ module.exports = function(Employee) {
                     errs.push(data.err);
                 }
                 var projectId = undefined;
+                var summary = list[i].summary;
                 if (data.project !== null) {
                     projectId = data.project.id;
+                    summary = tag + " - " + summary.substring(summary.lastIndexOf("]") + 1).trim();
                 }
                 seperateAttendees(app, list[i].attendees, function(data) {
                     //WHOLE DAY EVENTS ARE SKIPPED
                     if (list[i].start.dateTime !== undefined && list[i].end.dateTime !== undefined) {
                         Meeting.upsertWithWhere({ externalId: list[i].id }, {
                             externalId: list[i].id,
-                            summary: list[i].summary,
+                            summary: summary,
                             room: list[i].location,
                             start: list[i].start.dateTime,
                             end: list[i].end.dateTime,
@@ -218,13 +220,9 @@ module.exports = function(Employee) {
                                 errs.push(err);
                                 loopDone++;
                             } else {
-                                var tag = (list[i].summary.substring(list[i].summary.lastIndexOf("[") + 1, list[i].summary.lastIndexOf("]"))).trim();
                                 var obj1 = JSON.parse(JSON.stringify(obj));
                                 obj1.meetees = data.employees;
                                 obj1.externals = data.externals;
-                                if (obj.projectId !== undefined) {
-                                    obj1.summary = tag + " - " + obj1.summary.substring(obj1.summary.lastIndexOf("]") + 1).trim();
-                                }
                                 returnList.push(obj1);
                                 addEmployeesToMeeting(obj, data.employees, function() {
                                     addExternalsToMeeting(obj, data.externals, function() {
