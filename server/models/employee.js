@@ -3,16 +3,16 @@
 var GoogleCalendar = require('google-calendar');
 var refresh = require('passport-oauth2-refresh');
 
-module.exports = function (Employee) {
+module.exports = function(Employee) {
 
-    Employee.integrations = function (id, cb) {
+    Employee.integrations = function(id, cb) {
         const UserIdentity = this.app.models.UserIdentity;
         var returns = [];
         UserIdentity.find({ where: { employeeId: id } }, function(err, results) {
-            if(err !== null) {
+            if (err !== null) {
                 cb(err);
             } else {
-                for(var i = 0; results !== null && i < results.length; i++) {
+                for (var i = 0; results !== null && i < results.length; i++) {
                     returns.push(results[i].provider);
                 }
                 cb(null, returns);
@@ -20,13 +20,13 @@ module.exports = function (Employee) {
         });
     }
 
-    Employee.removeAllData = function (id, cb) {
+    Employee.removeAllData = function(id, cb) {
         const UserIdentity = this.app.models.UserIdentity;
-        Employee.destroyById(id, function (err) {
+        Employee.destroyById(id, function(err) {
             if (err !== null) {
                 cb(err);
             } else {
-                UserIdentity.destroyAll({ employeeId: id }, function (err, info) {
+                UserIdentity.destroyAll({ employeeId: id }, function(err, info) {
                     if (err !== null) {
                         cb(err);
                     } else {
@@ -38,22 +38,22 @@ module.exports = function (Employee) {
     }
 
     function refreshToken(UserIdentity, token, id, cb) {
-        refresh.requestNewAccessToken('google', token, function (err, accessToken, refreshToken) {
+        refresh.requestNewAccessToken('google', token, function(err, accessToken, refreshToken) {
             if (refreshToken === null || refreshToken === undefined) {
                 refreshToken = token;
             }
-            UserIdentity.upsertWithWhere({ and: [{ employeeId: id }, { provider: 'google-login' }] }, { credentials: { accessToken: accessToken, refreshToken: refreshToken } }, function (err, obj) {
+            UserIdentity.upsertWithWhere({ and: [{ employeeId: id }, { provider: 'google-login' }] }, { credentials: { accessToken: accessToken, refreshToken: refreshToken } }, function(err, obj) {
                 cb(accessToken);
             });
         });
     }
 
-    Employee.getMeetings = function (name, cb) {
+    Employee.getMeetings = function(name, cb) {
         var resp;
         const app = this.app;
         const UserIdentity = this.app.models.UserIdentity;
 
-        Employee.findOne({ where: { or: [{ username: name }, { email: name }] } }, function (err, emp) {
+        Employee.findOne({ where: { or: [{ username: name }, { email: name }] } }, function(err, emp) {
             if (err !== null) {
                 cb(err);
             } else if (emp !== null) {
@@ -63,17 +63,17 @@ module.exports = function (Employee) {
                 if (calendarIds === undefined || calendarIds.length === 0) {
                     cb("No calendars selected.");
                 } else {
-                    UserIdentity.findOne({ where: { and: [{ employeeId: id }, { provider: 'google-login' }] } }, function (err, ui) {
+                    UserIdentity.findOne({ where: { and: [{ employeeId: id }, { provider: 'google-login' }] } }, function(err, ui) {
                         if (ui === null) {
                             cb("Google not integrated.");
                         } else {
-                            refreshToken(UserIdentity, ui.credentials.refreshToken, id, function (accessToken) {
+                            refreshToken(UserIdentity, ui.credentials.refreshToken, id, function(accessToken) {
                                 var errs = [];
                                 var meetings = [];
                                 var loopDone = 0;
 
                                 for (var i = 0; i < calendarIds.length; i++) {
-                                    getMeetingsById(app, accessToken, calendarIds[i], function (data) {
+                                    getMeetingsById(app, accessToken, calendarIds[i], function(data) {
                                         if (data.err !== null) {
                                             errs.push(data.err);
                                         } else {
@@ -99,22 +99,22 @@ module.exports = function (Employee) {
         });
     }
 
-    Employee.getMeetingsByCalendarId = function (name, calendarId, cb) {
+    Employee.getMeetingsByCalendarId = function(name, calendarId, cb) {
         var resp;
         const app = this.app;
         const UserIdentity = this.app.models.UserIdentity;
 
-        Employee.findOne({ where: { or: [{ username: name }, { email: name }] } }, function (err, emp) {
+        Employee.findOne({ where: { or: [{ username: name }, { email: name }] } }, function(err, emp) {
             if (err !== null) {
                 cb(err);
             } else if (emp !== null) {
                 var id = emp.id;
-                UserIdentity.findOne({ where: { and: [{ employeeId: id }, { provider: 'google-login' }] } }, function (err, ui) {
+                UserIdentity.findOne({ where: { and: [{ employeeId: id }, { provider: 'google-login' }] } }, function(err, ui) {
                     if (ui === null) {
                         cb("Google not integrated.");
                     } else {
-                        refreshToken(UserIdentity, ui.credentials.refreshToken, id, function (accessToken) {
-                            getMeetingsById(app, accessToken, calendarId, function (data) {
+                        refreshToken(UserIdentity, ui.credentials.refreshToken, id, function(accessToken) {
+                            getMeetingsById(app, accessToken, calendarId, function(data) {
                                 if (data.err !== null) {
                                     cb(data.err);
                                 } else {
@@ -130,11 +130,11 @@ module.exports = function (Employee) {
         });
     }
 
-    Employee.getCalendars = function (name, cb) {
+    Employee.getCalendars = function(name, cb) {
         var resp;
         const UserIdentity = this.app.models.UserIdentity;
 
-        Employee.findOne({ where: { or: [{ username: name }, { email: name }] } }, function (err, emp) {
+        Employee.findOne({ where: { or: [{ username: name }, { email: name }] } }, function(err, emp) {
             if (err !== null) {
                 cb(err);
             } else if (emp !== null) {
@@ -142,14 +142,14 @@ module.exports = function (Employee) {
 
                 console.log(id);
 
-                UserIdentity.findOne({ where: { and: [{ employeeId: id }, { provider: 'google-login' }] } }, function (err, ui) {
+                UserIdentity.findOne({ where: { and: [{ employeeId: id }, { provider: 'google-login' }] } }, function(err, ui) {
                     if (ui === null) {
                         cb("Google not integrated.");
                     } else {
-                        refreshToken(UserIdentity, ui.credentials.refreshToken, id, function (accessToken) {
+                        refreshToken(UserIdentity, ui.credentials.refreshToken, id, function(accessToken) {
                             var googleCalendar = new GoogleCalendar(accessToken);
 
-                            googleCalendar.calendarList.list(function (err, calendarList) {
+                            googleCalendar.calendarList.list(function(err, calendarList) {
                                 if (err !== null) {
                                     cb(err);
                                 } else {
@@ -173,7 +173,7 @@ module.exports = function (Employee) {
         var nextTwoWeeks = new Date();
         nextTwoWeeks.setDate(nextTwoWeeks.getDate() + 14);
 
-        googleCalendar.events.list(id, { timeMin: oneWeekAgo.toISOString(), timeMax: nextTwoWeeks.toISOString() }, function (err, eventsList) {
+        googleCalendar.events.list(id, { timeMin: oneWeekAgo.toISOString(), timeMax: nextTwoWeeks.toISOString() }, function(err, eventsList) {
             if (err !== null) {
                 data = { err: err, list: null };
                 cb(data);
@@ -194,54 +194,54 @@ module.exports = function (Employee) {
 
         for (let i = 0; i < list.length; i++) {
             var tag = (list[i].summary.substring(list[i].summary.lastIndexOf("[") + 1, list[i].summary.lastIndexOf("]"))).trim();
-            createProject(app, tag, function (data) {
-                if(data.err !== null) {
+            createProject(app, tag, function(data) {
+                if (data.err !== null) {
                     errs.push(data.err);
                 }
                 var projectId = undefined;
-                if(data.project !== null) {
+                if (data.project !== null) {
                     projectId = data.project.id;
                 }
-                seperateAttendees(app, list[i].attendees, function (data) {
+                seperateAttendees(app, list[i].attendees, function(data) {
                     //WHOLE DAY EVENTS ARE SKIPPED
                     if (list[i].start.dateTime !== undefined && list[i].end.dateTime !== undefined) {
-                        Meeting.upsertWithWhere({ externalId: list[i].id },
-                            {
-                                externalId: list[i].id,
-                                summary: list[i].summary,
-                                room: list[i].location,
-                                start: list[i].start.dateTime,
-                                end: list[i].end.dateTime,
-                                projectId: projectId
-                            }, function (err, obj) {
-                                if (err !== null) {
-                                    errs.push(err);
-                                    loopDone++;
-                                } else {
-                                    var tag = (list[i].summary.substring(list[i].summary.lastIndexOf("[") + 1, list[i].summary.lastIndexOf("]"))).trim();
-                                    var obj1 = JSON.parse(JSON.stringify(obj));
-                                    obj1.meetees = data.employees;
-                                    obj1.externals = data.externals;
-                                    if(obj.projectId !== undefined) {
-                                        obj1.summary = tag + " - " + obj1.summary.substring(obj1.summary.lastIndexOf("]") + 1).trim();
-                                    }
-                                    returnList.push(obj1);
-                                    addEmployeesToMeeting(obj, data.employees, function () {
-                                        addExternalsToMeeting(obj, data.externals, function () {
-                                            loopDone++;
-                                            if (loopDone === list.length) {
-                                                if (errs.length > 0) {
-                                                    cbCalled = true;
-                                                    cb({ err: errs, list: null });
-                                                } else {
-                                                    cbCalled = true;
-                                                    cb({ err: null, list: returnList });
-                                                }
-                                            }
-                                        });
-                                    });
+                        Meeting.upsertWithWhere({ externalId: list[i].id }, {
+                            externalId: list[i].id,
+                            summary: list[i].summary,
+                            room: list[i].location,
+                            start: list[i].start.dateTime,
+                            end: list[i].end.dateTime,
+                            description: list[i].description,
+                            projectId: projectId
+                        }, function(err, obj) {
+                            if (err !== null) {
+                                errs.push(err);
+                                loopDone++;
+                            } else {
+                                var tag = (list[i].summary.substring(list[i].summary.lastIndexOf("[") + 1, list[i].summary.lastIndexOf("]"))).trim();
+                                var obj1 = JSON.parse(JSON.stringify(obj));
+                                obj1.meetees = data.employees;
+                                obj1.externals = data.externals;
+                                if (obj.projectId !== undefined) {
+                                    obj1.summary = tag + " - " + obj1.summary.substring(obj1.summary.lastIndexOf("]") + 1).trim();
                                 }
-                            });
+                                returnList.push(obj1);
+                                addEmployeesToMeeting(obj, data.employees, function() {
+                                    addExternalsToMeeting(obj, data.externals, function() {
+                                        loopDone++;
+                                        if (loopDone === list.length) {
+                                            if (errs.length > 0) {
+                                                cbCalled = true;
+                                                cb({ err: errs, list: null });
+                                            } else {
+                                                cbCalled = true;
+                                                cb({ err: null, list: returnList });
+                                            }
+                                        }
+                                    });
+                                });
+                            }
+                        });
                     } else {
                         loopDone++;
                     }
@@ -264,7 +264,7 @@ module.exports = function (Employee) {
         if (tag === undefined || tag.trim().length === 0) {
             cb({ err: null, project: null });
         } else {
-            Project.upsertWithWhere({ tag: tag }, { tag: tag }, function (err, obj) {
+            Project.upsertWithWhere({ tag: tag }, { tag: tag }, function(err, obj) {
                 if (err !== null) {
                     cb({ err: err, project: null });
                 } else {
@@ -284,12 +284,12 @@ module.exports = function (Employee) {
         var errs = [];
 
         for (let i = 0; attendees !== null && attendees !== undefined && i < attendees.length; i++) {
-            UserIdentity.findOne({ where: { and: [{ email: attendees[i].email }, { provider: 'google-login' }] } }, function (err, obj) {
+            UserIdentity.findOne({ where: { and: [{ email: attendees[i].email }, { provider: 'google-login' }] } }, function(err, obj) {
                 if (err !== null) {
                     errs.push(err);
                     loopDone++;
                 } else if (obj !== null) {
-                    Employee.findOne({ where: { id: obj.employeeId } }, function (err, obj) {
+                    Employee.findOne({ where: { id: obj.employeeId } }, function(err, obj) {
                         employees.push(obj);
                         loopDone++;
                         if (loopDone === attendees.length) {
@@ -301,7 +301,7 @@ module.exports = function (Employee) {
                         }
                     })
                 } else {
-                    External.getInformation(attendees[i].displayName.substr(0, attendees[i].displayName.indexOf(' ')), attendees[i].displayName.substr(attendees[i].displayName.indexOf(' ') + 1), function (err, obj) {
+                    External.getInformation(attendees[i].displayName.substr(0, attendees[i].displayName.indexOf(' ')), attendees[i].displayName.substr(attendees[i].displayName.indexOf(' ') + 1), function(err, obj) {
                         externals.push(obj);
                         loopDone++;
                         if (loopDone === attendees.length) {
@@ -334,7 +334,7 @@ module.exports = function (Employee) {
             cb();
         }
         for (var i = 0; i < employees.length; i++) {
-            meeting.meetees.add(employees[i].id, function (err) {
+            meeting.meetees.add(employees[i].id, function(err) {
                 loopDone++;
                 if (loopDone === employees.length) {
                     cb();
@@ -349,7 +349,7 @@ module.exports = function (Employee) {
             cb();
         }
         for (var i = 0; i < externals.length; i++) {
-            meeting.externals.add(externals[i].id, function (err) {
+            meeting.externals.add(externals[i].id, function(err) {
                 loopDone++;
                 if (loopDone === externals.length) {
                     cb();
@@ -407,8 +407,7 @@ module.exports = function (Employee) {
             path: '/getMeetingsByCalendarId',
             verb: 'get'
         },
-        accepts: [
-            {
+        accepts: [{
                 arg: 'name',
                 type: 'string'
             },
@@ -440,7 +439,7 @@ module.exports = function (Employee) {
         description: 'Get information about the calendars by username or email of the employee.'
     });
 
-    Employee.afterRemoteError("create", function (ctx, next) {
+    Employee.afterRemoteError("create", function(ctx, next) {
         ctx.error.message = (ctx.error.message.substr(ctx.error.message.indexOf("Details:"))).substr(9);
         next();
     });
