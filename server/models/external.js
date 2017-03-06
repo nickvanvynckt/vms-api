@@ -107,7 +107,6 @@ module.exports = function(External) {
             if (error)
                 console.log(error);
             data = response;
-            console.log(data);
             cb(data);
         });
     }
