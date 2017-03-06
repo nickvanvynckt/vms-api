@@ -69,32 +69,43 @@ module.exports = function(Employee) {
                         } else {
                             refreshToken(UserIdentity, ui.credentials.refreshToken, id, function(accessToken) {
                                 var errs = [];
-                                var meetings = [];
-                                var loopDone = 0;
+                                var returnList = [];
+                                var i = 0;
 
-                                for (var i = 0; i < calendarIds.length; i++) {
-                                    getMeetingsById(app, accessToken, calendarIds[i], function(data) {
-                                        if (data.err !== null) {
-                                            errs.push(data.err);
+                                var callback = function(data) {
+                                    errs = errs.concat(data.errs);
+                                    if (data.meetings !== null) {
+                                        returnList = returnList.concat(data.meetings);
+                                    }
+                                    i++;
+                                    if (i === calendarIds.length) {
+                                        if (errs.length > 0) {
+                                            cb(errs);
                                         } else {
-                                            meetings = meetings.concat(data.list);
+                                            cb(null, returnList);
                                         }
-                                        loopDone++;
-                                        if (loopDone === calendarIds.length) {
-                                            if (errs.length > 0) {
-                                                cb(errs);
-                                            } else {
-                                                cb(null, meetings);
-                                            }
-                                        }
-                                    });
+                                    } else {
+                                        calendarLoop(i, calendarIds, accessToken, app, callback);
+                                    }
                                 }
+
+                                calendarLoop(i, calendarIds, accessToken, app, callback);
                             });
                         }
                     });
                 }
             } else {
                 cb("Unable to find user in database.");
+            }
+        });
+    }
+
+    function calendarLoop(i, calendarIds, accessToken, app, cb) {
+        getMeetingsById(app, accessToken, calendarIds[i], function(data) {
+            if (data.err !== null) {
+                cb({ errs: data.err, meetings: null });
+            } else {
+                cb({ errs: [], meetings: data.list });
             }
         });
     }
@@ -139,9 +150,6 @@ module.exports = function(Employee) {
                 cb(err);
             } else if (emp !== null) {
                 var id = emp.id;
-
-                console.log(id);
-
                 UserIdentity.findOne({ where: { and: [{ employeeId: id }, { provider: 'google-login' }] } }, function(err, ui) {
                     if (ui === null) {
                         cb("Google not integrated.");
@@ -192,7 +200,7 @@ module.exports = function(Employee) {
         var i = 0;
 
         var callback = function(data) {
-            errs.concat(data.errs);
+            errs = errs.concat(data.errs);
             if (data.meeting !== null) {
                 returnList.push(data.meeting);
             }
@@ -217,7 +225,6 @@ module.exports = function(Employee) {
         var errs = [];
         var tag = (list[i].summary.substring(list[i].summary.lastIndexOf("[") + 1, list[i].summary.lastIndexOf("]"))).trim();
         createProject(app, tag, function(data) {
-            console.log(i);
             if (data.err !== null) {
                 errs.push(data.err);
             }
