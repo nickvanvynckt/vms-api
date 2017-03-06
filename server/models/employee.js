@@ -193,7 +193,6 @@ module.exports = function(Employee) {
 
         var callback = function(data) {
             errs.concat(data.errs);
-            console.log(errs);
             if (data.meeting !== null) {
                 returnList.push(data.meeting);
             }

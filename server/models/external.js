@@ -3,7 +3,7 @@
 var path = require('path');
 var app = require(path.resolve(__dirname, '../server'));
 var GoogleSearch = require('google-search');
-var googleSearch = new GoogleSearch({ key: 'AIzaSyAWqi1qfUyGPOTcmhE0gu-5Ik8hz8Ncjr8', cx: '002086392339423832635:4taepnplwtq' });
+var googleSearch = new GoogleSearch({ key: 'AIzaSyDmXoXIey6c-GtQyF9u33o5F8UR2xTfCqU', cx: '002086392339423832635:4taepnplwtq' });
 var MongoClient = require('mongodb').MongoClient;
 var async = require('async');
 
@@ -68,7 +68,7 @@ module.exports = function(External) {
     function upsert(fname, lname, cb) {
         var object;
         var name = fname + ' ' + lname;
-        /*var googleSearch = googleSearchFunction(name, function(data) {
+        var googleSearch = googleSearchFunction(name, function(data) {
             var index = 0;
             var found = false;
 
@@ -77,25 +77,25 @@ module.exports = function(External) {
                     var fname = data.items[index].pagemap.hcard[0].fn.substr(0, data.items[index].pagemap.hcard[0].fn.indexOf(' '));
                     var lname = data.items[index].pagemap.hcard[0].fn.substr(data.items[index].pagemap.hcard[0].fn.indexOf(' ') + 1);
 
-                    found = true;*/
+                    found = true;
 
-        var external = new External({
-            fname: fname,
-            lname: lname,
-            pictureURL: "",
-            //Date is saved in UTC (one hour off)
-            last_edited: Date.now()
-        });
+                    var external = new External({
+                        fname: fname,
+                        lname: lname,
+                        pictureURL: data.items[index].pagemap.hcard[0].photo,
+                        //Date is saved in UTC (one hour off)
+                        last_edited: Date.now()
+                    });
 
-        External.upsert(external, function(err, obj) {
-            object = obj;
-            cb(object);
-        });
-        /*} else {
+                    External.upsert(external, function(err, obj) {
+                        object = obj;
+                        cb(object);
+                    });
+                } else {
                     index++;
                 }
             }
-        });*/
+        });
     }
 
     function googleSearchFunction(name, cb) {
@@ -107,6 +107,7 @@ module.exports = function(External) {
             if (error)
                 console.log(error);
             data = response;
+            console.log(data);
             cb(data);
         });
     }
