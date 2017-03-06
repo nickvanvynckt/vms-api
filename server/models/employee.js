@@ -234,6 +234,21 @@ module.exports = function(Employee) {
                 projectId = data.project.id;
                 summary = tag + " - " + summary.substring(summary.lastIndexOf("]") + 1).trim();
             }
+            if (list[i].attendees !== undefined) {
+                var found = false;
+                for (var j = 0; j < list[i].attendees.length; j++) {
+                    if (list[i].attendees[j].email === list[i].creator.email) {
+                        found = true;
+                        break;
+                    }
+                }
+                if (!found) {
+                    console.log(list[i].summary);
+                    list[i].attendees.push(list[i].creator);
+                }
+            } else {
+                list[i].attendees = [list[i].creator];
+            }
             seperateAttendees(app, list[i].attendees, function(data) {
                 //WHOLE DAY EVENTS ARE SKIPPED
                 if (list[i].start.dateTime !== undefined && list[i].end.dateTime !== undefined) {
