@@ -243,7 +243,6 @@ module.exports = function(Employee) {
                     }
                 }
                 if (!found) {
-                    console.log(list[i].summary);
                     list[i].attendees.push(list[i].creator);
                 }
             } else {
