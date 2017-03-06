@@ -187,74 +187,77 @@ module.exports = function(Employee) {
 
     function addToMeetings(app, list, cb) {
         const Meeting = app.models.Meeting;
-        var loopDone = 0;
         var errs = [];
         var returnList = [];
-        var cbCalled = false;
+        var i = 0;
 
-        for (let i = 0; i < list.length; i++) {
-            var tag = (list[i].summary.substring(list[i].summary.lastIndexOf("[") + 1, list[i].summary.lastIndexOf("]"))).trim();
-            createProject(app, tag, function(data) {
-                if (data.err !== null) {
-                    errs.push(data.err);
+        var callback = function(data) {
+            errs.concat(data.errs);
+            console.log(errs);
+            if (data.meeting !== null) {
+                returnList.push(data.meeting);
+            }
+            i++;
+            if (i === list.length) {
+                if (errs.length > 0) {
+                    cb({ err: errs, list: null });
+                } else {
+                    cb({ err: null, list: returnList });
                 }
-                var projectId = undefined;
-                var summary = list[i].summary;
-                if (data.project !== null) {
-                    projectId = data.project.id;
-                    summary = tag + " - " + summary.substring(summary.lastIndexOf("]") + 1).trim();
-                }
-                seperateAttendees(app, list[i].attendees, function(data) {
-                    //WHOLE DAY EVENTS ARE SKIPPED
-                    if (list[i].start.dateTime !== undefined && list[i].end.dateTime !== undefined) {
-                        Meeting.upsertWithWhere({ externalId: list[i].id }, {
-                            externalId: list[i].id,
-                            summary: summary,
-                            room: list[i].location,
-                            start: list[i].start.dateTime,
-                            end: list[i].end.dateTime,
-                            description: list[i].description,
-                            projectId: projectId
-                        }, function(err, obj) {
-                            if (err !== null) {
-                                errs.push(err);
-                                loopDone++;
-                            } else {
-                                var obj1 = JSON.parse(JSON.stringify(obj));
-                                obj1.meetees = data.employees;
-                                obj1.externals = data.externals;
-                                returnList.push(obj1);
-                                addEmployeesToMeeting(obj, data.employees, function() {
-                                    addExternalsToMeeting(obj, data.externals, function() {
-                                        loopDone++;
-                                        if (loopDone === list.length) {
-                                            if (errs.length > 0) {
-                                                cbCalled = true;
-                                                cb({ err: errs, list: null });
-                                            } else {
-                                                cbCalled = true;
-                                                cb({ err: null, list: returnList });
-                                            }
-                                        }
-                                    });
-                                });
-                            }
-                        });
-                    } else {
-                        loopDone++;
-                    }
-                    if (loopDone === list.length && !cbCalled) {
-                        if (errs.length > 0) {
-                            cbCalled = true;
-                            cb({ err: errs, list: null });
-                        } else {
-                            cbCalled = true;
-                            cb({ err: null, list: returnList });
-                        }
-                    }
-                });
-            });
+            } else {
+                loop(i, list, app, callback);
+            }
         }
+
+        loop(i, list, app, callback);
+
+    }
+
+    function loop(i, list, app, cb) {
+        const Meeting = app.models.Meeting;
+        var errs = [];
+        var tag = (list[i].summary.substring(list[i].summary.lastIndexOf("[") + 1, list[i].summary.lastIndexOf("]"))).trim();
+        createProject(app, tag, function(data) {
+            console.log(i);
+            if (data.err !== null) {
+                errs.push(data.err);
+            }
+            var projectId = undefined;
+            var summary = list[i].summary;
+            if (data.project !== null) {
+                projectId = data.project.id;
+                summary = tag + " - " + summary.substring(summary.lastIndexOf("]") + 1).trim();
+            }
+            seperateAttendees(app, list[i].attendees, function(data) {
+                //WHOLE DAY EVENTS ARE SKIPPED
+                if (list[i].start.dateTime !== undefined && list[i].end.dateTime !== undefined) {
+                    Meeting.upsertWithWhere({ externalId: list[i].id }, {
+                        externalId: list[i].id,
+                        summary: summary,
+                        room: list[i].location,
+                        start: list[i].start.dateTime,
+                        end: list[i].end.dateTime,
+                        description: list[i].description,
+                        projectId: projectId
+                    }, function(err, obj) {
+                        if (err !== null) {
+                            errs.push(err);
+                        } else {
+                            var obj1 = JSON.parse(JSON.stringify(obj));
+                            obj1.meetees = data.employees;
+                            obj1.externals = data.externals;
+                            addEmployeesToMeeting(obj, data.employees, function() {
+                                addExternalsToMeeting(obj, data.externals, function() {
+                                    cb({ errs: errs, meeting: obj1 });
+                                });
+                            });
+                        }
+                    });
+                } else {
+                    cb({ errs: errs, meeting: null });
+                }
+            });
+        });
     }
 
     function createProject(app, tag, cb) {
