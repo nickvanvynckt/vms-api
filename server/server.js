@@ -33,24 +33,24 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.middleware('session:before', cookieParser(app.get('cookieSecret')));
-app.middleware('session', session({secret: 'keyboard cat', saveUninitialized: true, resave: false, signed: true}));
+app.middleware('session', session({ secret: 'keyboard cat', saveUninitialized: true, resave: false, signed: true }));
 
 //Body parser config
 app.middleware('parse', bodyParser.json());
-app.middleware('parse', bodyParser.urlencoded({extended: true}));
+app.middleware('parse', bodyParser.urlencoded({ extended: true }));
 // The access token is only available after boot
-app.middleware('auth', loopback.token({model: app.models.AccessToken}));
+app.middleware('auth', loopback.token({ model: app.models.AccessToken }));
 
 // Passport configurators..
 var PassportConfigurator = loopbackPassport.PassportConfigurator;
 var passportConfigurator = new PassportConfigurator(app);
 
 passport.serializeUser(function(user, done) {
-  done(null, user);
+    done(null, user);
 });
 
 passport.deserializeUser(function(user, done) {
-  done(null, user);
+    done(null, user);
 });
 
 // Bootstrap the application, configure models, datasources and middleware.
@@ -62,8 +62,7 @@ boot(app, __dirname, function(err) {
     // start the server if `$ node server.js`
     if (require.main === module)
         app.start();
-    }
-);
+});
 
 passportConfigurator.setupModels({
     userModel: app.models.employee,
@@ -75,8 +74,8 @@ passportConfigurator.setupModels({
 app.use(flash());
 
 var googleStrategy = new GoogleStrategy({
-    clientID: "258576207390-v3eeisflali8goj9dp4qrq9q0p98rpfg.apps.googleusercontent.com",
-    clientSecret: "G0Vu58pzXxN-Yggbcu8O3BvO",
+    clientID: "76402852390-v65bqbapk6tg964tnbveg84rv8abtaea.apps.googleusercontent.com",
+    clientSecret: "drYRZn4EiePthBu08gtvjfn-",
     callbackURL: "http://localhost:4000/auth/google/callback",
     passReqToCallback: true
 }, function(request, accessToken, refreshToken, profile, done) {
@@ -96,7 +95,7 @@ var googleStrategy = new GoogleStrategy({
         app.models.UserIdentity.upsertWithWhere({
             externalId: profile.externalId
         }, profile, function(err, obj) {
-            if(emp.pictureURL === undefined && profile.photos.length > 0) {
+            if (emp.pictureURL === undefined && profile.photos.length > 0) {
                 emp.pictureURL = profile.photos[0].value;
                 app.models.Employee.upsertWithWhere({
                     id: id
@@ -115,7 +114,7 @@ var linkedInStrategy = new LinkedinStrategy({
     clientSecret: "jHTjkR8pKTMWAgZt",
     callbackURL: "http://localhost:4000/auth/linkedin/callback",
     passReqToCallback: true
-}, function(req, token, tokenSecret, profile, done){
+}, function(req, token, tokenSecret, profile, done) {
     var data = JSON.parse(req.query.state);
     app.models.employee.findOne({
         where: { id: data.id }
@@ -131,7 +130,7 @@ var linkedInStrategy = new LinkedinStrategy({
         app.models.UserIdentity.upsertWithWhere({
             externalId: profile.externalId
         }, profile, function(err, obj) {
-            if(profile.photos.length > 0) {
+            if (profile.photos.length > 0) {
                 emp.pictureURL = profile.photos[0].value;
                 app.models.Employee.upsertWithWhere({
                     id: id
@@ -159,19 +158,18 @@ app.get('/auth/google', function(req, res, next) {
         prompt: "consent",
         action: "page",
         json: true,
-        state: JSON.stringify({id: req.query.id})
-    }, function(err, usr, info) {
-    }) (req, res, next);
+        state: JSON.stringify({ id: req.query.id })
+    }, function(err, usr, info) {})(req, res, next);
 });
 
 app.get('/auth/google/callback', function(req, res, next) {
     passport.authenticate('google', {
         callbackURL: "http://localhost:4000/auth/google/callback?callback=" + req.query.callback,
-        successRedirect: 'http://localhost:3000/integrations?success=google&callback=' + req.query.callback, 
+        successRedirect: 'http://localhost:3000/integrations?success=google&callback=' + req.query.callback,
         failureRedirect: 'http://localhost:3000/',
         responseType: "token",
         failureFlash: true
-    }) (req, res, next);
+    })(req, res, next);
 });
 
 app.get('/auth/linkedin', function(req, res, next) {
@@ -179,18 +177,18 @@ app.get('/auth/linkedin', function(req, res, next) {
         "scope": ["r_basicprofile", "r_emailaddress"],
         "callbackURL": "http://localhost:4000/auth/linkedin/callback?callback=" + req.query.callback,
         "json": true,
-        "state": JSON.stringify({id: req.query.id})
-    }) (req, res, next);
+        "state": JSON.stringify({ id: req.query.id })
+    })(req, res, next);
 });
 
 app.get('/auth/linkedin/callback', function(req, res, next) {
     passport.authenticate('linkedin', {
         callbackURL: "http://localhost:4000/auth/linkedin/callback?callback=" + req.query.callback,
-        successRedirect: 'http://localhost:3000/integrations?success=linkedin&callback=' + req.query.callback, 
+        successRedirect: 'http://localhost:3000/integrations?success=linkedin&callback=' + req.query.callback,
         failureRedirect: 'http://localhost:3000/',
         responseType: "token",
         failureFlash: true
-    }) (req, res, next);
+    })(req, res, next);
 });
 
 app.start = function() {
