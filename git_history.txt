@@ -1,0 +1,86 @@
+97e393a - Bert Vandormael, 7 hours ago : Merge branch 'master' of https://github.com/nickvanvynckt/vms-api
+8eaa69d - Bert Vandormael, 7 hours ago : [PATCH] Calendars asynchronous
+a55593a - nickvanvynckt, 7 hours ago : Merge branch 'master' of https://github.com/nickvanvynckt/vms-api
+ca61f71 - nickvanvynckt, 7 hours ago : [FEATURE] Added projects remote method
+5daf257 - Bert Vandormael, 7 hours ago : [PATCH] Google search working again
+0276e5c - Bert Vandormael, 8 hours ago : Merge branch 'master' of https://github.com/nickvanvynckt/vms-api
+c8e0cf0 - Bert Vandormael, 8 hours ago : [PATCH] Adding meetings is now asynchronous
+74e4a98 - nickvanvynckt, 8 hours ago : Merge branch 'master' of https://github.com/nickvanvynckt/vms-api
+bb23bba - nickvanvynckt, 8 hours ago : [FEATURE] Added an extra endpoint that returns author information as well
+86253e5 - Bert Vandormael, 9 hours ago : Merge branch 'master' of https://github.com/nickvanvynckt/vms-api
+1e868be - Bert Vandormael, 9 hours ago : [TEMP-BUGFIX] No google search
+0fca1b4 - Bert Vandormael, 9 hours ago : [PATCH] New google api project
+a191f9c - nickvanvynckt, 10 hours ago : [PATCH] Added default value to date
+8ebe0d3 - Bert Vandormael, 22 hours ago : [FEATURE] Get all meetings in database with /meetings/all
+5a86617 - Bert Vandormael, 26 hours ago : [PATCH] Meeting summary with tag is now very pretty
+80e6952 - nickvanvynckt, 26 hours ago : Merge branch 'master' of https://github.com/nickvanvynckt/vms-api
+cd529b9 - nickvanvynckt, 26 hours ago : [FEATURE] Added phone number to external
+73193e6 - Bert Vandormael, 2 days ago : [FEATURE] Description added to meeting
+16b45b2 - JorisPalings, 3 days ago : [PATCH] Fixed tag replacement
+5f4060d - Bert Vandormael, 3 days ago : [PATCH] Spaces around tag removed
+2712b28 - Bert Vandormael, 3 days ago : [BUGFIX] Tag in summary fixed
+7d30479 - Bert Vandormael, 3 days ago : [PATCH] Integration check without cookies
+752196a - Bert Vandormael, 3 days ago : Merge branch 'master' of https://github.com/nickvanvynckt/vms-api
+54e7cf6 - Bert Vandormael, 3 days ago : [FEATURE] Add meeting to project by using [tag] in front of meeting name
+6e4db2a - JorisPalings, 4 days ago : Merge branch 'master' of https://github.com/nickvanvynckt/vms-api
+7ba6ed1 - JorisPalings, 4 days ago : [FEATURE] Added server installation instrcutions
+874e42d - Bert Vandormael, 4 days ago : [PATCH] Return error when google not yet integrated - stops servers from crashing
+9d6f509 - Bert Vandormael, 4 days ago : Merge branch 'master' of https://github.com/nickvanvynckt/vms-api
+0f53dbe - Bert Vandormael, 4 days ago : [FEATURE] Account can be deleted - employee + integrations
+7be67ce - JorisPalings, 4 days ago : [PATCH] Removed logging
+7b5a0eb - JorisPalings, 4 days ago : [PATCH] Removed unused client directory
+85f765a - Bert Vandormael, 4 days ago : [PATCH] Integrations connected to correct employee object
+e96bf91 - Bert Vandormael, 4 days ago : [FEATURE] Integrations redirect to correct page
+2d56d8c - Bert Vandormael, 6 days ago : [PATCH] No meetings returns empty array
+d3b05aa - Bert Vandormael, 6 days ago : [BUGFIX] No meetings found only shown when 0 meetings returned
+a7726c8 - nickvanvynckt, 6 days ago : [PATCH] Error shown when no meetings found - solved by Bert
+4cd8e27 - Bert Vandormael, 6 days ago : [BUGFIX] Integrations working correctly
+ae6814a - Bert Vandormael, 6 days ago : [FEATURE] Whole day meetings are skipped
+f23741e - Bert Vandormael, 7 days ago : [FEATURE] PictureURL automatically set when integrating with Google or LinkedIn
+07b29bb - Bert Vandormael, 7 days ago : Merge branch 'master' of https://github.com/nickvanvynckt/vms-api
+b0e263c - Bert Vandormael, 7 days ago : [FEATURE] [BUGFIX] Remotemethods can be called by username or email + double callback-call fixed
+930b2ba - nickvanvynckt, 7 days ago : [PATCH] Changed the redirect of the passport authentication so that the integration buttons work again
+1b25472 - Bert Vandormael, 7 days ago : [FEATURE] Error catched after create, message changed
+a60cc21 - Bert Vandormael, 7 days ago : Merge branch 'master' of https://github.com/nickvanvynckt/vms-api
+7529e81 - Bert Vandormael, 7 days ago : [FEATURE] getMeeting returns externals and meetees
+7ff3ddd - JorisPalings, 8 days ago : [FEATURE] Added remarks about (C:)/data/db
+c3678d2 - JorisPalings, 8 days ago : [FEATURE] Changed README to installation instructions
+dc14f07 - Bert Vandormael, 8 days ago : [BUGFIX] Login redirects working + UserIdentity entities correctly created
+664018c - nickvanvynckt, 8 days ago : [PATCH] Renaming file means adding them again to git apparently..
+8475288 - nickvanvynckt, 8 days ago : [PATCH] Changed the automigrate to autoupdate, automigrate clears database everytime application gets started
+b656d89 - Bert Vandormael, 8 days ago : Merge branch 'master' of https://github.com/nickvanvynckt/vms-api
+0065aff - Bert Vandormael, 8 days ago : [FEATURE] Employees & externals linked to meeting
+1ee4c56 - nickvanvynckt, 9 days ago : [PATCH] Made sure all the collections are created when api is fired up. Did this using automigrate
+d49ef9f - nickvanvynckt, 9 days ago : [PATCH] Changed the configuration of the Linkedin login
+6ec4ef5 - nickvanvynckt, 9 days ago : [PATCH] Changed the configuration of the Linkedin login
+40c6a71 - Bert Vandormael, 10 days ago : [FEATURE] Google access tokens automatic refresh
+c2b766f - Bert Vandormael, 11 days ago : [FEATURE] Loopback version 3.3.0
+43167ed - Bert Vandormael, 11 days ago : [MERGE]
+c2bf26b - Bert Vandormael, 11 days ago : [FEATURE] Google login auto refresh added
+48f8741 - nickvanvynckt, 11 days ago : [PATCH] Made the function for getting information about external better
+12ca047 - Bert Vandormael, 11 days ago : Merge branch 'master' of https://github.com/nickvanvynckt/vms-api
+c22af15 - Bert Vandormael, 11 days ago : [FEATURE] Google calendar working Only with manual token refresh
+905d848 - nickvanvynckt, 12 days ago : [FEATURE] Added the feature to get information about the external, so far a name and a picture is all I can get through a google search
+ae7e446 - Bert Vandormael, 13 days ago : [FEATURE] TTL added to external
+1a470eb - Bert Vandormael, 13 days ago : [FEATURE] Google-login + LinkedIn-login  working Facebook-login + Twitter-login removed
+e95a2aa - nickvanvynckt, 13 days ago : Added the functionality to the external to get information with a google search. Some names do give some problems
+581eb16 - nickvanvynckt, 2 weeks ago : [PATCH] Made all providers return JSON
+5f3eb56 - nickvanvynckt, 2 weeks ago : [PATCH] Fixed a problem with the Twitter login
+a11a3e0 - nickvanvynckt, 2 weeks ago : Forgot to delete a line in the boot-script
+08c0bb2 - Nick Van Vynckt, 2 weeks ago : [FEATURE] Added the social login features using passport
+6fe4419 - Nick Van Vynckt, 2 weeks ago : [FEATURE] Added the passport dependencies and a providers.json file
+4d8d6b2 - Nick Van Vynckt, 2 weeks ago : [PATCH] Changed the README.MD
+e794d72 - Nick Van Vynckt, 2 weeks ago : [FEATURE] Added user control access
+99b481b - Nick Van Vynckt, 2 weeks ago : [PATCH] Changed the models directory to server only instead of common
+4b76f5a - Bert Vandormael, 2 weeks ago : Merge branch 'master' of https://github.com/nickvanvynckt/vms-api
+649709d - Bert Vandormael, 2 weeks ago : [FEATURE] File locationTest.js added
+3aec9d0 - Nick Van Vynckt, 3 weeks ago : [PATCH] Made the clear database work. Have to write the population
+207b658 - Nick Van Vynckt, 3 weeks ago : [FEATURE] Working on the tests
+69ea6f2 - Nick Van Vynckt, 3 weeks ago : [PATCH] Added should to package.json
+2c747ba - Nick Van Vynckt, 3 weeks ago : [FEATURE] Added mongoDB connector
+7502572 - Nick Van Vynckt, 3 weeks ago : [PATCH] Added relations to note
+f9a5059 - Nick Van Vynckt, 3 weeks ago : [FEATURE]Added the mongodb connector
+bdaac19 - Nick Van Vynckt, 3 weeks ago : [FEATURE] Added the test dependencies
+23381a1 - Nick Van Vynckt, 3 weeks ago : [FEATURE] Added the models
+0446dec - Nick Van Vynckt, 3 weeks ago : [FEATURE] Initial commit, loopback is initialised
+9449f94 - nickvanvynckt, 3 weeks ago : Initial commit
